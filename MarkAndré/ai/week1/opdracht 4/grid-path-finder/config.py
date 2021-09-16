@@ -10,12 +10,13 @@ START_C = '#C7F464'
 GOAL_C  = 'yellow'
 
 # grid size
-START = (0, 0) # try to modify the start position
-SIZE  = 25     # the nr of nodes=grid crossings in a row (or column)
-GOAL  = (SIZE-1, SIZE-1)
+START = (10, 0) # try to modify the start position
+SIZE  = 100     # the nr of nodes=grid crossings in a row (or column)
+# GOAL  = (SIZE-1, SIZE-1)
+GOAL  = (99, 30)
 
 # pixel sizes
-CELL  = 25           # size of cell in pixels
+CELL  = 13           # size of cell in pixels
 W  = (SIZE-1) * CELL # width of grid in pixels
 H  = W               # height of grid
 TR = 10              # translate/move the grid, upper left is TR,TR

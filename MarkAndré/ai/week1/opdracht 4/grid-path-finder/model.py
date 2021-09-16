@@ -10,6 +10,10 @@ app = 0
 grid  = [[0 for x in range(cf.SIZE)] for y in range(cf.SIZE)]
 visitedNodes = {}
 directions = [ #hor, vert
+    # [1,1], #right top
+    # [-1,1], #left top
+    # [-1,-1], #left bottom
+    # [-1,-1], #left bottom
     [1,0], #right centre
     [0,1], #centre bottom
     [0,-1], #centre top
@@ -68,50 +72,50 @@ def step(start, alg):
 
     while dist > 0:
         try:
-            app.pause()
-            workingTup = mQ.get()
-            # app.plot_line_segment(workingTup[0], workingTup[1], newX, newY, color=cf.FINAL_C)
+            app.pause()#teken nieuwe bezochte nodes
+            workingTup = mQ.get()#get de beste node
         except:
             print("No routes possible")
             break
 
-        for x in directions:
-            newX = workingTup[0] + x[0]
-            newY = workingTup[1] + x[1]
+        for x in directions:# voor alle directies
+            newX = workingTup[0] + x[0] # get new x-as for node
+            newY = workingTup[1] + x[1] # get new y as for node
 
-            if(newX < 0 or newY < 0 or newX == cf.SIZE or newY == cf.SIZE):
+            if(newX < 0 or newY < 0 or newX == cf.SIZE or newY == cf.SIZE):#als de nieuwe node buiten de grid valt
                 continue
 
-            if not get_grid_value((newX, newY)) == -1:
-                app.plot_line_segment(workingTup[0], workingTup[1], newX, newY, color=cf.BLOCK_C)
+            if not get_grid_value((newX, newY)) == -1: #als de nieuwe node een blocked node is
                 continue
 
-            temptup = (newX, newY)
-            if not (newX, newY) in visitedNodes:
+            temptup = (newX, newY) #maak een tijdelijke tuple van de nieuwe coords
+            if not (newX, newY) in visitedNodes:# if not in visited nodes (dus nog niet gezien)
 
-                step += 1
-                visitedNodes[(newX, newY)] = (workingTup[0], workingTup[1])
-                dist = distance(temptup)
+                visitedNodes[(newX, newY)] = (workingTup[0], workingTup[1]) # stop de node in visited node en vanuit welke node hij is bereikt.
+                dist = distance(temptup) #get distance tot de goal
 
-                if alg == "A*":
+                if alg == "A*": # op basis van welke alg gebruikt wordt verander je de manier waarop de weight gedaan wordt
                     mQ.put(copy.deepcopy(temptup),copy.deepcopy(dist))
                 else:
+                    step += 1 #increase step count
                     mQ.put(copy.deepcopy(temptup),step)
 
                 app.plot_node((newX, newY), cf.PATH_C)
-                if newY == 24 and newX == 24:
 
-                    draw((24, 24))
+                if temptup == cf.GOAL:# als het eind bereikt is teken dan het lijn en stop de loop
+                    draw(temptup)
                     break
 
-def draw(node):
-    prevNode = visitedNodes.get(node)
-    if not node == "start":
-        app.plot_line_segment(node[0], node[1], prevNode[0], prevNode[1], color=cf.FINAL_C)
-        draw(prevNode)
+def draw(node):#van eind tot start get preceding node van node en teken een lijn. Doe het dan met de preceding node van de preceding node. herhaal tot je bij start bent.
+    prevNode = visitedNodes.get(node) # get preceding node
+    if not prevNode == None: # als er geen preceding node is (en dus  de 1e is)
+        app.plot_line_segment(node[0], node[1], prevNode[0], prevNode[1], color=cf.FINAL_C)# draw line
+        app.pause()
+        draw(prevNode)# recursive call
 
 def distance(node):
     a = (goal[0] - node[0]) * (goal[0] - node[0])
     b = (goal[1] - node[1]) * (goal[1] - node[1])
     c = a + b
-    return round(math.sqrt(c),6)
+    result = round(math.sqrt(c),6)
+    return result
