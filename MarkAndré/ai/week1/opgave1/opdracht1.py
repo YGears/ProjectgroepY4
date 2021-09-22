@@ -1,46 +1,44 @@
 import copy
-characters = ["W","G","C"]
-forbidden = [["G", "W"], ["C", "G"]]
-forbidden2 = ["GW", "CG"]
+ilegalStates = [
+    "CG|FW",
+    "GW|CF",
+    "FW|CG",
+    "F|CGW",
+    "CGW|F",
+    "CF|GW"
+]
+characters = ["C", "", "G", "W"]
 west = []
 east = []
 nodes = []
-winningNodes = []
 
 class main:
     def search(self):
-        tw = copy.deepcopy(characters)
         te = []
-        n = node(tw, te, False, [])
-
+        tw = ["C", "F", "G", "W"]
+        n = node(tw, te, ["CFGW|"])
         nodes.append((n))
+
         while len(nodes) > 0:
             result = nodes[0].getNodes()
             nodes.remove(nodes[0])
-            # print(result)
             for x in result:
-                if len(x[0]) == 0:
-                    # winningNodes.append[copy.deepcopy(x)]
+                tempName = getName(x[0], x[1])
+                if tempName == "|CFGW":
+                    x[2].append(getName(x[0], x[1]))
                     print("winner")
+                    print(x[2])
                 else:
-                    tempName = getName(x[0], x[1])
                     valid = True
-                    for y in x[3]:
-                        if getName(x[0], x[1]) == y:
+                    for y in x[2]:
+                        if tempName == y:
                             valid = False
-                        else:
-                            print("")
 
-                    # print(str(x[0]) + " " + str(x[1]))
                     if valid:
-                        print(x[3])
-                        x[3].append(getName(x[0],x[1]))
-                        nodes.append(node(x[0], x[1], not x[2], x[3]))
-            print(len(nodes))
+                        x[2].append(getName(x[0], x[1]))
+                        nodes.append(node(x[0], x[1], x[2]))
 
-
-
-def getName( WEST, EAST):
+def getName(WEST, EAST):
     name = ""
     for x in WEST:
         name += x
@@ -50,78 +48,60 @@ def getName( WEST, EAST):
     return name
 
 class node:
-    def __init__(self, WEST, EAST, SIDE, VISITED):
+    def __init__(self, WEST, EAST, VISITED):
         self.west = WEST
         self.east = EAST
-        self.side = SIDE
+        self.west.append("")
+        self.east.append("")
         self.visitedNodes = VISITED
-        for x in self.west:
-            if x == " " :
-                self.west.remove(" ")
-                continue
-
-        for x in self.east:
-            if x == " " :
-                self.east.remove(" ")
-                continue
-        self.west.append(" ")
-        self.east.append(" ")
-        # print(VISITED)
-
-        self.west.sort()
-        self.east.sort()
 
     def getNodes(self):
         res = []
-        if self.side:
+        if "F" in self.east:
+            self.east.remove("F")
+            self.west.append("F")
             for x in self.east:
+
                 te = copy.deepcopy(self.east)
                 tw = copy.deepcopy(self.west)
-                tw.append(x)
                 tw.sort()
-                te.remove(x)
+                te.remove("")
+                tw.remove("")
 
-                valid = True
-                for x in forbidden2:
-                    tne = ""
-                    tnw = ""
-                    for y in te:
-                        tne += y
+                if x != "":
+                    te.remove(x)
+                    tw.append(x)
+                    tw.sort()
 
-                    for y in tw:
-                        tnw += y
-
-                    if (tnw in x and len(tnw) > 1) or (tne in x and len(tne) > 1):
-                        valid = False
-                if valid:
-                    res.append((tw, te, self.side, self.visitedNodes))
+                if self.check(tw, te): res.append(
+                    (copy.deepcopy(tw), copy.deepcopy(te), copy.deepcopy(self.visitedNodes)))
         else:
+            self.west.remove("F")
+            self.east.append("F")
+
             for x in self.west:
                 te = copy.deepcopy(self.east)
                 tw = copy.deepcopy(self.west)
-                te.append(x)
-                te.sort()
-                tw.remove(x)
+                te.remove("")
+                tw.remove("")
 
-                valid = True
-                for x in forbidden2:
-                    tne = ""
-                    tnw = ""
-                    for y in te:
-                        tne += y
+                if x != "":
+                    tw.remove(x)
+                    te.append(x)
+                    te.sort()
 
-                    for y in tw:
-                        tnw += y
-
-                    if (tnw in x and len(tnw) > 1) or (tne in x and len(tne) > 1):
-                        valid = False
-                # print(str(tw) + " " + str(te))
-                if valid:
-
-                    res.append((tw, te, self.side, self.visitedNodes))
+                if self.check(tw, te): res.append(
+                    (copy.deepcopy(tw), copy.deepcopy(te), copy.deepcopy(self.visitedNodes)))
         return res
+
+    def check(self, tw, te):
+        valid = True
+        tn = getName(tw, te)
+
+        for x in ilegalStates:
+            if tn in x: valid = False
+
+        return valid
 
 m = main()
 m.search()
-
-
