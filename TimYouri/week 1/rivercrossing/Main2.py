@@ -1,12 +1,6 @@
 import copy
 illegalStates = [
-    "CG|FW",
-    "GW|CF",
-    "FW|CG",
-    "F|CGW",
-    "CGW|F",
-    "CF|GW"
-]
+    "CG|FW", "GW|CF", "FW|CG", "F|CGW","CGW|F","CF|GW"]
 path = []
 
 def dfs (node, path=[]):
