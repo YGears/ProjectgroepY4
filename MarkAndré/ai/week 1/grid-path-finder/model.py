@@ -4,7 +4,7 @@ import math
 import config as cf
 import copy
 
-# global var
+#de tijdcomplexitijd is O(n^2)
 goal = [0,0]
 app = 0
 grid  = [[0 for x in range(cf.SIZE)] for y in range(cf.SIZE)]

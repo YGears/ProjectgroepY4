@@ -1,7 +1,7 @@
 from bord import bord
 import heapq
 import copy
-
+# de tijdcomplexiteid is O(n^4)
 class main():
 
     def start(self ):
@@ -34,4 +34,3 @@ class main():
 
 m = main()
 m.start()
-
