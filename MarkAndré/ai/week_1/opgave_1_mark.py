@@ -48,51 +48,61 @@ def is_valid(state):
     return True
 
 
-# prints the given state
+# A Function that prints the given state
 def print_state(state):
     for s in state[0]:
         print(s, end='')  # Print object in the set of the Left_side
-    print(" | ", end='')  # Seperator CLI between sides
+    print(" | ", end='')  # Separator CLI between sides
     for s in state[1]:
         print(s, end='')  # Print object in the set of the East_side
-    print()               # Break
+    print()  # Break
 
 
-# check if a state is a goal-state/solution
+# A Function to check if a state is a goal-state/solution
 def is_goal_state(state):
     # state[0] = West needs to be empty all object need to be at state[1] East
     if state[0] == set() and state[1] == {'F', 'G', 'C', 'W'}:
-        return True
-    return False
+        return True  # goal_state
+    return False  # Non goal_state
 
 
 # A Function that returns the solution
-def dfs(state, visited, final_state):
+def dfs(state, visited):
     # if the current state is the final state, print it and return, else, go through each further possible state
     visited.append(copy_state(state))
     # visited? python functie append , call functie copy state en stop daar state in
     if is_goal_state(state):
         print("Solution found using DFS:")
-        for s in visited:
-            print_state(s)
+        for state in visited:
+            print_state(state)
         print("")
-    else:
-        for s in get_next_states(state):
-            if is_valid(s):
-                if s not in visited:
-                    dfs(s, visited.copy(), final_state)
-    return final_state
+
+    for state in get_next_states(state):
+        if is_valid(state):
+            if state not in visited:
+                dfs(state, visited.copy())
+    return state
 
 
 """ 
 Start state, tuple with 2 sets one of west_side and one of east_side
 All objects/props start on the west_side
 """
-state = ({'F', 'G', 'C', 'W'}, set())
+start_west = {'F', 'G', 'C', 'W'}
+start_east = set()
 
+start_state = (start_west, start_east)
+state = start_state
+import timeit
+start = timeit.default_timer()
 # call the function solve
-solutions = dfs(state, [], [])
-#print(type([]))
+solutions = dfs(state, [])
+
+# print(type([]))
+
+
+stop = timeit.default_timer()
+print('Time: ', stop - start)
 
 
 """

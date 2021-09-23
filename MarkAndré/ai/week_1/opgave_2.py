@@ -83,16 +83,24 @@ def find_words():
 
 
 # NxN means x/i/row and y/j/col are equal for bord size
-size = 4
+print("Enter bord size n :")
+size = int(input())
 board = create_board()
 print_board(board)
 words = import_words()
 prefix_set = create_prefix(words)
 print()
+#import timeit
+#start = timeit.default_timer()
 results = find_words()
+print(results)
+#stop = timeit.default_timer()
+#print('Time: ', stop - start)
+
 
 # Time complexity is O(n^2)
 # n = board size --> 1x1, 2x2, 3x3 nxn --> n^2
+# find_words , nested forloop --> n^2
 
 '''
 Sources 
