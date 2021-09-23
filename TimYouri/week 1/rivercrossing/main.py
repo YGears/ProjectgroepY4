@@ -5,7 +5,7 @@ lastLegalState = ['dr', 'dr']
 
 visitedStates = []
 
-def MoveTo(object, lastLegalState=lastLegalState):
+def MoveTo(object):
   #if gameEnd == 0:
         if "F" in object:
             for x in object:
@@ -27,6 +27,7 @@ def MoveTo(object, lastLegalState=lastLegalState):
                 print('Your last legal state: ')
                 print()
                 print(lastLegalState)
+                print(illegalStates)
                 return
             else:
                 lastLegalState = stateRiver
