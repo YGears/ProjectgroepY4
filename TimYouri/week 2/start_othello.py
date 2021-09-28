@@ -30,6 +30,7 @@ This representation has two useful properties:
 2. Operations involving bounds checking are slightly simpler.
 """
 import random
+import copy
 
 max_depth = 2
 
@@ -278,13 +279,25 @@ def getHeuristic(node, player):
         return scoreWhite
     if player is BLACK:
         return scoreBlack
+    else:
+        return '777'
 
 
 def getChildren(node, player):
     children = []
+    i = 0
+    tempboard = copy.deepcopy(node)
     for move in legal_moves(player, node):
-        children.append(make_move(move, player, node))
+        print("legal move:")
+        print(move)
+        child = make_move(move, player, tempboard)
+        children.append(child)
 
+    for child in children:
+        i = i+1
+        print('kind' + str(i))
+        print(print_board(child))
+        print(getHeuristic(child, player))
     return children
 
 
