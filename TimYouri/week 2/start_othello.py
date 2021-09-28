@@ -175,8 +175,7 @@ def any_legal_move(player, board):
 # - Switch players. If the game is over, get the final score.
 
 def random_legal_move(player, board):
-    if any_legal_move(player, board) is not False:
-        print(legal_moves(player, board))
+    if any_legal_move(player, board):
         return random.choice(legal_moves(player, board))
     else:
         return None
@@ -187,12 +186,13 @@ def play(black_strategy, white_strategy):
     b = initial_board()
     current = BLACK
     print_board(b)
-    #
     # print(minimax(b, max_depth, BLACK))
 
-    while any_legal_move(current, b) is not None:
-        
-        b = make_move(black_strategy(PLAYERS.get(current), b), current, b)
+    while any_legal_move(current, b):
+        if current is BLACK:
+            b = make_move(black_strategy(current, b), current, b)
+        if current is WHITE:
+            b = make_move(white_strategy(current, b), current, b)
         print_board(b)
         # print("Score for player " + str(PLAYERS.get(current)) + " :" + str(minimax(b, max_depth, current)))
         current = next_player(b, current)
