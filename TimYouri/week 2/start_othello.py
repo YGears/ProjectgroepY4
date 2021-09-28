@@ -201,12 +201,23 @@ def play(black_strategy, white_strategy):
         if black_strategy(PLAYERS.get(current), b) is not None:
             b = make_move(black_strategy(PLAYERS.get(current), b), next_player(b, current), b)
             print_board(b)
-            print("Score for player "+ str(PLAYERS.get(current))+ " :" + str(minimax(b, max_depth, BLACK)))
+            print("Score for player " + str(PLAYERS.get(current)) + " :" + str(minimax(b, max_depth, current)))
         else:
             break
 
 
     print("game has ended!")
+    s = score(b)
+    print("score:")
+    print("Black: "+str(s[0]))
+    print("White: " + str(s[1]))
+
+    if s[0]>s[1]:
+        print("Black has won!")
+    elif s[0]<s[1]:
+        print("White has won!")
+    elif s[0] is s[1]:
+        print("it's a tie")
 
 def next_player(board, prev_player):
     # which player should move next?  Returns None if no legal moves exist
@@ -228,9 +239,12 @@ def next_player(board, prev_player):
 #     # call strategy(player, board) to get a move'
 #     pass
 
-def score(player, board):
+def score(board):
     # compute player's score (number of player's pieces minus opponent's)
-    pass
+
+    black = board.count(BLACK)
+    white = board.count(WHITE)
+    return black, white
 
 
 def minimax(node, depth, player):
