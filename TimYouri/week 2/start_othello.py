@@ -201,7 +201,7 @@ def play(black_strategy, white_strategy):
         if black_strategy(PLAYERS.get(current), b) is not None:
             b = make_move(black_strategy(PLAYERS.get(current), b), next_player(b, current), b)
             print_board(b)
-            print("minmax: "+ str(minimax(b, max_depth, BLACK)))
+            print("Score for player "+ str(PLAYERS.get(current))+ " :" + str(minimax(b, max_depth, BLACK)))
         else:
             break
 
