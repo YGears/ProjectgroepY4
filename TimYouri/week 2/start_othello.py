@@ -30,20 +30,7 @@ This representation has two useful properties:
 2. Operations involving bounds checking are slightly simpler.
 """
 
-# The black and white pieces represent the two players.
-value = 0
-
-EMPTY, BLACK, WHITE, OUTER = '.', '@', 'o', '?'
-PIECES = (EMPTY, BLACK, WHITE, OUTER)
-PLAYERS = {BLACK: 'Black', WHITE: 'White'}
-
-# To refer to neighbor squares we can add a direction to a square.
-UP, DOWN, LEFT, RIGHT = -10, 10, -1, 1
-UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT = -9, 11, 9, -11
-# in total 8 directions.
-DIRECTIONS = (UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT)
-
-max_depth = 5
+max_depth = 0
 
 pos_value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
              0, 50, -30, 10, 5, 5, 10, -30, 50, 0,
@@ -55,6 +42,17 @@ pos_value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
              0, -30, -40, -5, -5, -5, -5, -40, -30, 0,
              0, 50, -30, 10, 5, 5, 10, -30, 50, 0,
              0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+# The black and white pieces represent the two players.
+EMPTY, BLACK, WHITE, OUTER = '.', '@', 'o', '?'
+PIECES = (EMPTY, BLACK, WHITE, OUTER)
+PLAYERS = {BLACK: 'Black', WHITE: 'White'}
+
+# To refer to neighbor squares we can add a direction to a square.
+UP, DOWN, LEFT, RIGHT = -10, 10, -1, 1
+UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT = -9, 11, 9, -11
+# in total 8 directions.
+DIRECTIONS = (UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT)
 
 
 def squares():
@@ -195,18 +193,20 @@ def play(black_strategy, white_strategy):
     b = initial_board()
     current = None
     print_board(b)
+    #
+    # print(minimax(b, max_depth, BLACK))
 
     while next_player(b, current) is not None:
         current = next_player(b, current)
-        if next_player(b, current) is not None:
-            b = make_move(black_strategy(b, max_depth, current), next_player(b, current), b)
+        if black_strategy(PLAYERS.get(current), b) is not None:
+            b = make_move(black_strategy(PLAYERS.get(current), b), next_player(b, current), b)
             print_board(b)
+            print("minmax: "+ str(minimax(b, max_depth, BLACK)))
         else:
-            pass
-        pass
+            break
+
 
     print("game has ended!")
-
 
 def next_player(board, prev_player):
     # which player should move next?  Returns None if no legal moves exist
@@ -223,8 +223,6 @@ def next_player(board, prev_player):
                 return WHITE
             else:
                 return None
-
-
 #
 # def get_move(strategy, player, board):
 #     # call strategy(player, board) to get a move'
@@ -255,7 +253,7 @@ def getHeuristic(node, player):
 
     for x in i:
         if 1 <= (x % 10) <= 8:
-            print(pos_value[x])
+            # print(pos_value[x])
             if node[x] == '@':
                 scoreBlack = scoreBlack + pos_value[x]
             if node[x] == 'o':
@@ -275,4 +273,6 @@ def getChildren(node, player):
 
 
 # Play strategies
-play(minimax, random_legal_move)
+play(random_legal_move, random_legal_move)
+
+
