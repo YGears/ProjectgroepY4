@@ -1,15 +1,11 @@
 """
-
 Othello is a turn-based two-player strategy board game.
-
 -----------------------------------------------------------------------------
 Board representation
-
 We represent the board as a flat-list of 100 elements, which includes each square on
 the board as well as the outside edge. Each consecutive sublist of ten
 elements represents a single row, and each list element stores a piece. 
 An initial board contains four pieces in the center:
-
     ? ? ? ? ? ? ? ? ? ?
     ? . . . . . . . . ?
     ? . . . . . . . . ?
@@ -20,11 +16,8 @@ An initial board contains four pieces in the center:
     ? . . . . . . . . ?
     ? . . . . . . . . ?
     ? ? ? ? ? ? ? ? ? ?
-
 The outside edge is marked ?, empty squares are ., black is @, and white is o.
-
 This representation has two useful properties:
-
 1. Square (m,n) can be accessed as `board[mn]`, and m,n means m*10 + n. This avoids conversion
    between square locations and list indexes.
 2. Operations involving bounds checking are slightly simpler.
@@ -183,8 +176,8 @@ def any_legal_move(player, board):
 
 def random_legal_move(player, board):
     if any_legal_move(player, board) is not False:
-        lm = legal_moves(player, board)
-        return random.choice(lm)
+        print(legal_moves(player, board))
+        return random.choice(legal_moves(player, board))
     else:
         return None
 
@@ -192,19 +185,17 @@ def random_legal_move(player, board):
 def play(black_strategy, white_strategy):
     # play a game of Othello and return the final board and score
     b = initial_board()
-    current = None
+    current = BLACK
     print_board(b)
     #
     # print(minimax(b, max_depth, BLACK))
 
-    while next_player(b, current) is not None:
+    while any_legal_move(current, b) is not None:
+        
+        b = make_move(black_strategy(PLAYERS.get(current), b), current, b)
+        print_board(b)
+        # print("Score for player " + str(PLAYERS.get(current)) + " :" + str(minimax(b, max_depth, current)))
         current = next_player(b, current)
-        if black_strategy(PLAYERS.get(current), b) is not None:
-            b = make_move(black_strategy(PLAYERS.get(current), b), next_player(b, current), b)
-            print_board(b)
-            print("Score for player " + str(PLAYERS.get(current)) + " :" + str(minimax(b, max_depth, current)))
-        else:
-            break
 
 
     print("game has ended!")
@@ -303,5 +294,3 @@ def getChildren(node, player):
 
 # Play strategies
 play(random_legal_move, random_legal_move)
-
-
