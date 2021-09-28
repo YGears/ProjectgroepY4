@@ -30,7 +30,7 @@ This representation has two useful properties:
 2. Operations involving bounds checking are slightly simpler.
 """
 
-max_depth = 0
+max_depth = 2
 
 pos_value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
              0, 50, -30, 10, 5, 5, 10, -30, 50, 0,
@@ -248,6 +248,8 @@ def score(board):
 
 
 def minimax(node, depth, player):
+    if max_depth == depth:
+        value = getHeuristic(node, player)
     if depth == 0 or next_player(node, player) is None:
         return getHeuristic(node, player)
     if player == BLACK:
