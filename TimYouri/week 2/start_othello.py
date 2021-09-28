@@ -29,6 +29,7 @@ This representation has two useful properties:
    between square locations and list indexes.
 2. Operations involving bounds checking are slightly simpler.
 """
+import random
 
 max_depth = 0
 
@@ -182,8 +183,7 @@ def any_legal_move(player, board):
 def random_legal_move(player, board):
     if any_legal_move(player, board) is not False:
         lm = legal_moves(player, board)
-        n = len(lm) - 1
-        return lm[0]
+        return random.choice(lm)
     else:
         return None
 
