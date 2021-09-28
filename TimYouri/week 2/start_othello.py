@@ -31,6 +31,8 @@ This representation has two useful properties:
 """
 
 # The black and white pieces represent the two players.
+value = 0
+
 EMPTY, BLACK, WHITE, OUTER = '.', '@', 'o', '?'
 PIECES = (EMPTY, BLACK, WHITE, OUTER)
 PLAYERS = {BLACK: 'Black', WHITE: 'White'}
@@ -43,22 +45,24 @@ DIRECTIONS = (UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT)
 
 max_depth = 5
 
-pos_value = [0, 0,  0,   0, 0, 0, 0, 0, 0, 0,
-            0,  50, -30, 10, 5, 5, 10, -30, 50,0,
-            0,  -30,-40, -5, -5, -5, -5, -40, -30,0,
-            0,  10, -5, 20, 0, 0, 20, -5, 10,0,
-            0,  5,  -5, 0, 10, 10, 0, -5, 5,0,
-            0,  5,  -5, 0, 10, 10, 0, -5, 5,0,
-            0,  10, -5, 20, 0, 0, 20, -5, 10,0,
-            0,  -30,-40,-5, -5, -5, -5, -40, -30,0,
-            0,  50, -30,10, 5, 5, 10, -30, 50,0,
-            0,  0,  0,  0, 0, 0, 0, 0, 0, 0]
+pos_value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 50, -30, 10, 5, 5, 10, -30, 50, 0,
+             0, -30, -40, -5, -5, -5, -5, -40, -30, 0,
+             0, 10, -5, 20, 0, 0, 20, -5, 10, 0,
+             0, 5, -5, 0, 10, 10, 0, -5, 5, 0,
+             0, 5, -5, 0, 10, 10, 0, -5, 5, 0,
+             0, 10, -5, 20, 0, 0, 20, -5, 10, 0,
+             0, -30, -40, -5, -5, -5, -5, -40, -30, 0,
+             0, 50, -30, 10, 5, 5, 10, -30, 50, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
 
 def squares():
     # list all the valid squares on the board.
     # returns a list of valid integers [11, 12, ...]; e.g. 19,20,21 are invalid
     # 11 means first row, first col, because the board size is 10x10
     return [i for i in range(11, 89) if 1 <= (i % 10) <= 8]
+
 
 def initial_board():
     # create a new board with the initial black and white positions filled
@@ -71,6 +75,7 @@ def initial_board():
     board[54], board[55] = BLACK, WHITE
     return board
 
+
 def print_board(board):
     # get a string representation of the board
     # heading '  1 2 3 4 5 6 7 8\n'
@@ -78,9 +83,10 @@ def print_board(board):
     rep += '  %s\n' % ' '.join(map(str, range(1, 9)))
     # begin,end = 11,19 21,29 31,39 ..
     for row in range(1, 9):
-        begin, end = 10*row + 1, 10*row + 9
+        begin, end = 10 * row + 1, 10 * row + 9
         rep += '%d %s\n' % (row, ' '.join(board[begin:end]))
-    return rep
+    print(rep)
+
 
 # -----------------------------------------------------------------------------
 # Playing the game
@@ -97,9 +103,11 @@ def is_valid(move):
     # move must be an int, and must refer to a real square
     return isinstance(move, int) and move in squares()
 
+
 def opponent(player):
     # get player's opponent piece
     return BLACK if player is WHITE else WHITE
+
 
 def find_bracket(square, player, board, direction):
     # find and return the square that forms a bracket with square for player in the given
@@ -113,12 +121,14 @@ def find_bracket(square, player, board, direction):
     # if last square board[bracket] not in (EMPTY, OUTER, opp) then it is player
     return None if board[bracket] in (OUTER, EMPTY) else bracket
 
+
 def is_legal(move, player, board):
     # is this a legal move for the player?
     # move must be an empty square and there has to be a bracket in some direction
     # note: any(iterable) will return True if any element of the iterable is true
     hasbracket = lambda direction: find_bracket(move, player, board, direction)
     return board[move] == EMPTY and any(hasbracket(x) for x in DIRECTIONS)
+
 
 def make_move(move, player, board):
     # when the player makes a valid move, we need to update the board and flip all the
@@ -128,6 +138,7 @@ def make_move(move, player, board):
     for d in DIRECTIONS:
         make_flips(move, player, board, d)
     return board
+
 
 def make_flips(move, player, board, direction):
     # flip pieces in the given direction as a result of the move by player
@@ -140,6 +151,7 @@ def make_flips(move, player, board, direction):
         board[square] = player
         square += direction
 
+
 # Monitoring players
 
 # define an exception
@@ -148,67 +160,106 @@ class IllegalMoveError(Exception):
         self.player = player
         self.move = move
         self.board = board
-    
+
     def __str__(self):
         return '%s cannot move to square %d' % (PLAYERS[self.player], self.move)
+
 
 def legal_moves(player, board):
     # get a list of all legal moves for player
     # legal means: move must be an empty square and there has to be is an occupied line in some direction
     return [sq for sq in squares() if is_legal(sq, player, board)]
 
+
 def any_legal_move(player, board):
     # can player make any moves?
     return any(is_legal(sq, player, board) for sq in squares())
+
 
 # Putting it all together. Each round consists of:
 # - Get a move from the current player.
 # - Apply it to the board.
 # - Switch players. If the game is over, get the final score.
 
+def random_legal_move(player, board):
+    if any_legal_move(player, board) is not False:
+        lm = legal_moves(player, board)
+        n = len(lm) - 1
+        return lm[0]
+    else:
+        return None
+
+
 def play(black_strategy, white_strategy):
     # play a game of Othello and return the final board and score
-    pass
+    b = initial_board()
+    current = None
+    print_board(b)
+
+    while next_player(b, current) is not None:
+        current = next_player(b, current)
+        if next_player(b, current) is not None:
+            b = make_move(black_strategy(b, max_depth, current), next_player(b, current), b)
+            print_board(b)
+        else:
+            pass
+        pass
+
+    print("game has ended!")
+
 
 def next_player(board, prev_player):
     # which player should move next?  Returns None if no legal moves exist
-    pass
+    if prev_player is None:
+        return BLACK
+    else:
+        if prev_player is WHITE:
+            if any_legal_move(WHITE, board) is not None:
+                return BLACK
+            else:
+                return None
+        elif prev_player is BLACK:
+            if any_legal_move(BLACK, board) is not None:
+                return WHITE
+            else:
+                return None
 
-def get_move(strategy, player, board):
-    # call strategy(player, board) to get a move
-    pass
+
+#
+# def get_move(strategy, player, board):
+#     # call strategy(player, board) to get a move'
+#     pass
 
 def score(player, board):
     # compute player's score (number of player's pieces minus opponent's)
     pass
-# Play strategies
 
-print(print_board(initial_board()))
 
 def minimax(node, depth, player):
     if depth == 0 or next_player(node, player) is None:
         return getHeuristic(node, player)
     if player == BLACK:
         for child in getChildren(node, player):
-            value = max(value, minimax(child, depth-1, WHITE))
+            value = max(value, minimax(child, depth - 1, WHITE))
         return value
     else:
         for child in getChildren(node, player):
-            value = min(value, minimax(child,depth-1, BLACK))
+            value = min(value, minimax(child, depth - 1, BLACK))
+
 
 def getHeuristic(node, player):
     scoreBlack = 0
     scoreWhite = 0
 
-    i = range(11,89)
+    i = range(11, 89)
 
-    for x in i :
+    for x in i:
         if 1 <= (x % 10) <= 8:
             print(pos_value[x])
             if node[x] == '@':
                 scoreBlack = scoreBlack + pos_value[x]
             if node[x] == 'o':
-                scoreWhite  = scoreWhite + pos_value[x]
+                scoreWhite = scoreWhite + pos_value[x]
     if player is WHITE:
         return scoreWhite
     if player is BLACK:
@@ -222,3 +273,6 @@ def getChildren(node, player):
 
     return children
 
+
+# Play strategies
+play(minimax, random_legal_move)
