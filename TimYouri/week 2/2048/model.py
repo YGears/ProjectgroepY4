@@ -1,6 +1,7 @@
 import random
 import itertools
 import math
+import copy
 
 MAX_DEPTH = 3
 pattern_heur = [[0, 0, 1, 3], [0, 1, 3, 5], [1, 3, 5, 15], [3, 5, 15, 30]]
@@ -102,7 +103,6 @@ def start():
 
 def play_move(b, direction):
     # get merge functin an apply it to board
-    print(getheuristics(b))
     b = MERGE_FUNCTIONS[direction](b)
     add_two_four(b)
     return b
@@ -153,29 +153,112 @@ def get_random_move():
 
 
 def get_expectimax_move(b):
-    pass
+    print(getheuristics(b))
+    move = expectimax1st(b)
+    # print("MOVE:")
+    # print(move)
+    #
+    # print("Type of move object:")
+    # print(type(move))
+
+    x = [ 'right', 'down']
+    try:
+        if move[0] != '':
+            return move[0]
+        else:
+            print("Move[0], was leeg, random move...")
+            return random.choice(x)
+    except:
+        print("Random move proberen dan")
+        return random.choice(x)
+
+def expectimax1st(board):
+    if move_exists(board):
+        depth = MAX_DEPTH
+        childs = []
+
+        for y in MERGE_FUNCTIONS:
+            if not play_move(copy.deepcopy(board), y) == board:
+                tempBoard = play_move(copy.deepcopy(board), y)
+                childs.append(expectimax(tempBoard, depth, y))
+
+        high = 0
+        highsetMove = ("", -1)
+        for x in childs:
+            try:
+                if x[0] == '':
+                    print("POP")
+                    childs.pop(childs.index(x))
+            except:
+                pass
+            if x == None:
+                print("POOOp")
+                childs.pop(childs.index(x))
+
+            try:
+                if x[0] != '':
+                    high += x[1]
+                    if highsetMove[1] < x[1]:
+                        highsetMove = x
+            except:
+                pass
+
+
+        return (highsetMove[0], high/len(childs))
 
 # Expectimax algorithm based on slides AI lecture 2-2
-def expectimax(board, depth, player):
-    if depth == 0 or move_exists(board) == False:
-        return getheuristics(board)
-    if player == YOU:
-        for child in nodes:
-            value = max(value, expectimax(child, depth-1, MIN))
-        return value
-    else: # player == EXP, return weighted average of all child nodes' value
-        for child in nodes:
-            value = value + (probabillity[child] * expectimax(child, depth-1))
-        return value
+def expectimax(board, depth, move):
 
-    # game_won = 500
-    # game_lost = -500
-    # hoogst_linksboven = 100
-    # hoogst_anders = -100
-    # linksboven_leeg = -100
-    # rechtsonder_leeg = 100
-    # buurcel_vergelijkbaar = 50 #vergelijkbaar is hetzelfde nummer, 1 macht erboven of 1 macht eronder
-    # ingame score > 20.000 = win
+    board = play_move(copy.deepcopy(board), move)
+    totalmoves = 0
+
+
+    if move_exists(board) and depth != 0:
+        children = []
+        for direction in MERGE_FUNCTIONS:
+            if not play_move(copy.deepcopy(board), direction) == board:
+                totalmoves += 1
+                tChild = expectimax(copy.deepcopy(board), depth-1, direction)
+                if tChild is not None:
+                    children.append(tChild)
+
+                # children.append(expectimax(copy.deepcopy(board), depth-1, direction))
+
+
+        high = 0
+        highsetMove = ("", -1)
+
+        for x in children:
+            # print("Type of high and x object:")
+            # print(type(high))
+            # print(type(x))
+            # print(x)
+            # print(children)
+            if x[0] == '':
+                print("POP")
+                children.pop(children.index(x))
+            if x == None:
+                print("POOOp")
+                children.pop(x)
+            if x[0] != '':
+                    high +=x[1]
+                    if highsetMove[1] < x[1]:
+                        highsetMove = x
+
+
+        if len(children) > 0:
+            return(highsetMove[0], high/totalmoves)
+        else:
+            return(move, getheuristics(board))
+
+
+    else:
+        if game_state == 'win':
+            return(move, 9999)
+        else:
+            if depth == 0:
+
+                return(move, getheuristics(board))
 
 def getheuristics(board):
     # gebruik gemaakt van suggesties https://home.cse.ust.hk/~yqsong/teaching/comp3211/projects/2017Fall/G11.pdf
@@ -222,9 +305,9 @@ def getheuristics(board):
                 cluster_penalty = cluster_penalty + (current_cell - board[i][j-1])
     if move_exists(board) == False:
         if game_state(board) == 'win':
-            total_heur = total_heur + 2000
+            total_heur = total_heur + 9999000
         if game_state(board) == 'lose':
-            total_heur = total_heur - 2000
+            total_heur = total_heur - 99992000
 
 
     total_heur = total_heur + pattern_val + cluster_penalty
