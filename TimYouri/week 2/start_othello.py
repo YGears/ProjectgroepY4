@@ -25,7 +25,9 @@ This representation has two useful properties:
 import random
 import copy
 
-max_depth = 2
+max_depth = 5
+
+value = 0
 
 pos_value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
              0, 50, -30, 10, 5, 5, 10, -30, 50, 0,
@@ -186,16 +188,16 @@ def play(black_strategy, white_strategy):
     b = initial_board()
     current = BLACK
     print_board(b)
-    # print(minimax(b, max_depth, BLACK))
+    print(minimax(b, max_depth, BLACK))
 
-    while any_legal_move(current, b):
-        if current is BLACK:
-            b = make_move(black_strategy(current, b), current, b)
-        if current is WHITE:
-            b = make_move(white_strategy(current, b), current, b)
-        print_board(b)
-        # print("Score for player " + str(PLAYERS.get(current)) + " :" + str(minimax(b, max_depth, current)))
-        current = next_player(b, current)
+    # while any_legal_move(current, b):
+    #     if current is BLACK:
+    #         b = make_move(black_strategy(current, b), current, b)
+    #     if current is WHITE:
+    #         b = make_move(white_strategy(current, b), current, b)
+    #     print_board(b)
+    #     # print("Score for player " + str(PLAYERS.get(current)) + " :" + str(minimax(b, max_depth, current)))
+    #     current = next_player(b, current)
 
 
     print("game has ended!")
@@ -240,6 +242,7 @@ def score(board):
 
 
 def minimax(node, depth, player):
+    global value
     if max_depth == depth:
         value = getHeuristic(node, player)
     if depth == 0 or next_player(node, player) is None:
@@ -277,12 +280,11 @@ def getHeuristic(node, player):
 def getChildren(node, player):
     children = []
     i = 0
-    tempboard = copy.deepcopy(node)
     for move in legal_moves(player, node):
         print("legal move:")
         print(move)
-        child = make_move(move, player, tempboard)
-        children.append(child)
+        tb = make_move(move, player, copy.deepcopy(node))
+        children.append(tb)
 
     for child in children:
         i = i+1
