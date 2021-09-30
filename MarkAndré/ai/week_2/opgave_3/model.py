@@ -1,33 +1,32 @@
 import random
 import itertools
 import math
-import copy
+import copy as copy
 
-MAX_DEPTH = 3
+MAX_DEPTH = 6
+steps = 0
 
 def merge_left(b):
     # merge the board left
-    # this is the funcyoin that is reused in the other merges
-    # b = [[0, 2, 4, 4], [0, 2, 4, 8], [0, 0, 0, 4], [2, 2, 2, 2]]
+    # this function is reused in the other merges
+    # b = [[0, 2, 4, 4], [0, 2, 4, 8], [0, 0, 0, 4], [2, 2, 2, 2]]    
     def merge(row, acc):
         # recursive helper for merge_left
-
         # if len row == 0, return accumulator
         if not row:
             return acc
 
         # x = first element
         x = row[0]
-        # if len(row) == 1, add element to accumulator
+        # if len(row) == 1, add element to accu
         if len(row) == 1:
             return acc + [x]
-
         # if len(row) >= 2
         if x == row[1]:
-            # add row[0] + row[1] to accumulator, continue with row[2:]
+            # add row[0] + row[1] to accu, continue with row[2:]
             return merge(row[2:], acc + [2 * x])
         else:
-            # add row[0] to accumulator, continue with row[1:]
+            # add row[0] to accu, continue with row[1:]
             return merge(row[1:], acc + [x])
 
     new_b = []
@@ -53,7 +52,6 @@ def merge_right(b):
     # return [[0, 0, 2, 8], [0, 2, 4, 8], [0, 0, 0, 4], [0, 0, 4, 4]]
     return [reverse(x) for x in ml]
 
-
 def merge_up(b):
     # merge the board upward
     # note that zip(*b) is the transpose of b
@@ -63,15 +61,11 @@ def merge_up(b):
     # return [[2, 4, 8, 4], [0, 2, 2, 8], [0, 0, 0, 4], [0, 0, 0, 2]]
     return [list(x) for x in zip(*trans)]
 
-
 def merge_down(b):
     # merge the board downward
-    # b = [[0, 2, 4, 4], [0, 2, 4, 8], [0, 0, 0, 4], [2, 2, 2, 2]]
-    # trans = [[0, 0, 0, 2], [0, 0, 2, 4], [0, 0, 8, 2], [4, 8, 4, 2]]
     trans = merge_right(zip(*b))
     # return [[0, 0, 0, 4], [0, 0, 0, 8], [0, 2, 8, 4], [2, 4, 2, 2]]
     return [list(x) for x in zip(*trans)]
-
 
 # location: after functions
 MERGE_FUNCTIONS = {
@@ -89,10 +83,12 @@ def move_exists(b):
         for row in b:
             for x, y in zip(row[:-1], row[1:]):
                 # tuples (1, 2),(2, 3),(3, 4),(5, 6),(6, 7),(7, 8)
+                # if same value or an empty cell
                 if x == y or x == 0 or y == 0:
                     return True
         return False
 
+    # check horizontally and vertically
     if inner(b) or inner(zip(*b)):
         return True
     else:
@@ -105,13 +101,12 @@ def start():
     add_two_four(b)
     return b
 
-
 def play_move(b, direction):
     # get merge functin an apply it to board
+    # print( str(direction) + " - "  + str(b))
     b = MERGE_FUNCTIONS[direction](b)
     add_two_four(b)
     return b
-
 
 def add_two_four(b):
     # add a random tile to the board at open position.
@@ -120,13 +115,13 @@ def add_two_four(b):
     random.shuffle(rows)
     random.shuffle(cols)
     distribution = [2] * 9 + [4]
-    for i, j in itertools.product(rows, rows):
+    for i, j in itertools.product(rows, cols):
         if b[i][j] == 0:
             b[i][j] = random.sample(distribution, 1)[0]
             return (b)
         else:
             continue
-
+            
 def game_state(b):
     for i in range(4):
         for j in range(4):
@@ -138,95 +133,104 @@ def test():
     b = [[0, 2, 4, 4], [0, 2, 4, 8], [0, 0, 0, 4], [2, 2, 2, 2]]
     assert merge_left(b) == [[2, 8, 0, 0], [2, 4, 8, 0], [4, 0, 0, 0], [4, 4, 0, 0]]
     assert merge_right(b) == [[0, 0, 2, 8], [0, 2, 4, 8], [0, 0, 0, 4], [0, 0, 4, 4]]
-    assert merge_up(b) == [(2, 4, 8, 4), (0, 2, 2, 8), (0, 0, 0, 4), (0, 0, 0, 2)]
-    assert merge_down(b) == [(0, 0, 0, 4), (0, 0, 0, 8), (0, 2, 8, 4), (2, 4, 2, 2)]
+    assert merge_up(b) == [[2, 4, 8, 4], [0, 2, 2, 8], [0, 0, 0, 4], [0, 0, 0, 2]]
+    assert merge_down(b) == [[0, 0, 0, 4], [0, 0, 0, 8], [0, 2, 8, 4], [2, 4, 2, 2]]
     assert move_exists(b) == True
     b = [[2, 8, 4, 0], [16, 0, 0, 0], [2, 0, 2, 0], [2, 0, 0, 0]]
     assert (merge_left(b)) == [[2, 8, 4, 0], [16, 0, 0, 0], [4, 0, 0, 0], [2, 0, 0, 0]]
     assert (merge_right(b)) == [[0, 2, 8, 4], [0, 0, 0, 16], [0, 0, 0, 4], [0, 0, 0, 2]]
-    assert (merge_up(b)) == [(2, 8, 4, 0), (16, 0, 2, 0), (4, 0, 0, 0), (0, 0, 0, 0)]
-    assert (merge_down(b)) == [(0, 0, 0, 0), (2, 0, 0, 0), (16, 0, 4, 0), (4, 8, 2, 0)]
+    assert (merge_up(b)) == [[2, 8, 4, 0], [16, 0, 2, 0], [4, 0, 0, 0], [0, 0, 0, 0]]
+    assert (merge_down(b)) == [[0, 0, 0, 0], [2, 0, 0, 0], [16, 0, 4, 0], [4, 8, 2, 0]]
     assert (move_exists(b)) == True
+    b = [[32, 64, 2, 16], [8, 32, 16, 2], [4, 16, 8, 4], [2, 8, 4, 2]]
+    assert (move_exists(b)) == False
     b = [[0, 7, 0, 0], [0, 0, 7, 7], [0, 0, 0, 7], [0, 7, 0, 0]]
-    g = Game()
     for i in range(11):
-        g.add_two_four(b)
+        add_two_four(b)
+        print(b)
+
+
+weights = [
+    [4^15, 4^14, 4^13, 4^12],
+    [4^8, 4^9, 4^10, 4^11],
+    [4^7, 4^6, 4^5, 4^4],
+    [4^0, 4^1, 4^2, 4^3],
+]
+def score(b):
+    val = 1
+    numbers = {}
+    zeros = 0
+
+    val = val + b[0][0] * 100 # lefttop to be most valuable
+
+    for x in range(4):
+        for y in range(4):
+            if(b[x][y] == 2 or b[x][y] == 4): # 2's en 4's zijn slecht
+                val = val - weights[x][y] * b[x][y]
+            else:
+                val = (val + weights[x][y] * b[x][y])
+
+            if b[x][y] == 0: # een leeg bord is een blij bord
+                zeros +=1
+
+    val = val + zeros * 50
+    return val
+
+def highest(b):
+    h = -1
+    for x in b:
+        for y in x:
+            if y > h:
+                h = y
+    return h
 
 def get_random_move():
     return random.choice(list(MERGE_FUNCTIONS.keys()))
 
 def get_expectimax_move(b):
-    return expectimax(b, 0, 0)[0]
+    global steps
+    steps+=1
+    # move = expectimaxV2(b, get_random_move(), 0)[0]
+    move = startexpecti(b)[0]
+    print(move)
+    return move
 
-MAX_DEPTH = 4 # still gives mostly acceptable performace (5 would not), and gets to 2048
-WEIGHTS = [
-    [100, 50, 25, 10],
-    [50, 25, 10, 0],
-    [25, 10, 0, -10],
-    [10, 0, -10, -25]
-]
+def startexpecti(b):
+    if move_exists(b):
+        step = 0
+        childs = []
+        for y in MERGE_FUNCTIONS: # for all directies
+            if not play_move(copy.deepcopy(b), y) == b: # als het resulting bord anders is dan het meegeleverde bord
+                temporaryBoard = play_move(copy.deepcopy(b), y) # doe zet
+                childs.append(expectimaxV2(temporaryBoard, y, step)) # get (direction, score, bord)
+        high = 0
+        highsetMove = ("",-1)
+        for y in childs: # krijg de child met de grootste score
+            high +=y[1]
+            if highsetMove[1] < y[1]:
+                highsetMove = y
 
-# returns (dir, score)
-def expectimax(b, turn, depth):
-    if depth > MAX_DEPTH or not move_exists(b):
-        # return heuristic for current board
-        return ("left", heuristic(b))
-    if turn == 0:
-        # our turn, we can move in 4 directions
-        # apply each of the moves, and expectimax on the resulting Board
-        max_move = ("none", -math.inf)
-        for dir in ["left", "up", "down", "right"]:
-            new_b = MERGE_FUNCTIONS[dir](b)
-            if boards_equal(b, new_b) and not has_empty_spot(new_b):
-                # this move won't do anything (boards the same, and no spot for spawning new tile)
-                continue
-            new_move = (dir, expectimax(new_b, 1, depth + 1)[1])
-            if new_move[1] > max_move[1]:
-                max_move = new_move
-        return max_move
+        return (highsetMove[0], high/len(childs))
+
+def expectimaxV2(b, move, step):
+    step += 1
+    legals = 0
+    if move_exists(b) and step < MAX_DEPTH: # als er moves zijn en depth niet bereikt heeft
+        childs = []
+        for y in MERGE_FUNCTIONS:
+            if not play_move(copy.deepcopy(b), y) == b:
+                legals += 1 # tel aantal childs
+                temporaryBoard = play_move(copy.deepcopy(b), move)
+                childs.append(expectimaxV2(temporaryBoard, move, step)) # get (direction, score, bord)
+        high = 0
+        highsetMove = ("",-1)
+        for y in childs:
+            high +=y[1]
+            if highsetMove[1] < y[1]:
+                highsetMove = y
+        return (move, high/legals) # return eigen directie + average of childs
     else:
-        # 'game's' turn, open spots * 2 possibilities for spawning a 2 or 4
-        # 2: 90% chance, 4: 10% chance
-        # apply each possibility, and expectimax on the resulating boards
-        new_b = clone_board(b)
-        total = 0
-        count = 0
-        for x in range(4):
-            for y in range(4):
-                if new_b[x][y] == 0:
-                    new_b[x][y] = 2
-                    score = expectimax(new_b, 0, depth + 1)[1]
-                    total += score * 9 # 2: weight of 9
-                    new_b[x][y] = 4
-                    score = expectimax(new_b, 0, depth + 1)[1]
-                    total += score # 4: weight of 1
-                    count += 10 # total weight for both: 10
-        if count == 0:
-            # if there is no room to spawn a new tile, only option is to use current board
-            total = expectimax(new_b, 0, depth + 1)[1]
-            count = 1
-        return ("left", total / count)
-
-def clone_board(b):
-    return copy.deepcopy(b)
-
-def boards_equal(b, new_b):
-    for x in range(4):
-        for y in range(4):
-            if b[x][y] != new_b[x][y]:
-                return False
-    return True
-
-def has_empty_spot(b):
-    for x in range(4):
-        for y in range(4):
-            if b[x][y] == 0:
-                return True
-    return False
-
-def heuristic(b):
-    value = 0
-    for x in range(4):
-        for y in range(4):
-            value += WEIGHTS[x][y] * b[x][y]
-    return value
+        if game_state == 'win':
+            return(move, 99999999999999999999)
+        else:
+            return(move, score(b), b)

@@ -64,35 +64,68 @@ def plot_tsp(algorithm, cities):
 
 # Opdracht 1A
 def nearest_neighbour(cities):
+    # Versie 1
     # unvisited = set(cities)
     # start = unvisited.pop()
     # tour = [start]
-    start = next(iter(cities))
-    tour = [start]
-    unvisited = set(cities - {start})
+    start = next(iter(cities))                  # determine the starting point
+    tour = [start]                              # list of to store the tour/route
+    unvisited = set(cities - {start})           # set that keeps track of any unvisited cities
     while unvisited:
-        closest_city = City(x=math.inf, y=math.inf)  # dummy values
+        closest_city = City(x=math.inf, y=math.inf)  # create a nearest city using dummy values
         for city in unvisited:
             if distance(start, city) < distance(start, closest_city):
+                # for every city in unvisited check if the distance  between exp AB is shorter than AC
+                # by looping all cities for city A we now what the closest city to A is.
+                # than we add it to the tour and move on with the next city
                 closest_city = city
 
-        tour.append(closest_city)
-        start = closest_city
-        unvisited.remove(closest_city)
-    #print(tour)
+        tour.append(closest_city)               # this is the closest city add it to the tour
+        start = closest_city                    # the closest city while now be your next starting point
+        unvisited.remove(closest_city)          # removes the city from the unvisited list since it is now visited
     return tour
 
-#return de tour met de korste lengte
-def shortest_tour(tours):
-    return min(tours, key=tour_length)
 
-generate_cities = make_cities(40)
+def reverse_segment_if_better(tour, i, j):
+    # Given Tour from Nearest Neigbour or any other tour will do
+    # I = J=
+    # Given tour [...A,B...C,D...], consider reversing B...C to get [...A,C...B,D...]
 
-#1A
+    A = tour[i-1]
+    B = tour[i]
+    C = tour[j-1]
+    D = tour[j % len(tour)]
+
+    # Are old links (AB + CD) longer than new ones (AC + BD)? If so, reverse segment.
+    if distance(A, B) + distance(C, D) > distance(A, C) + distance(B, D):
+        tour[i:j] = reversed(tour[i:j])
+    return tour
+
+
+def alter_tour(tour):
+    "Try to alter tour for the better by reversing segments."
+    original_length = tour_length(tour)
+    for (start, end) in all_segments(len(tour)):
+        reverse_segment_if_better(tour, start, end)
+    # If we made an improvement, then try again; else stop and return tour.
+    if tour_length(tour) < original_length:
+        return alter_tour(tour)
+    return tour
+
+
+def all_segments(N):
+    return [(i, i + length)
+            for length in reversed(range(2, N))
+            for i in reversed(range(N - length + 1))]
+
+def improve_nn_tsp(cities): return alter_tour(nearest_neighbour(cities))
+
+generate_cities = make_cities(10)
+
+# 1A
 plot_tsp(nearest_neighbour, generate_cities)
-
-
-
+plot_tsp(improve_nn_tsp, generate_cities)
+# Standaard
 # give a demo with 10 cities using brute force
 #plot_tsp(try_all_tours, generate_cities)
 
@@ -149,6 +182,7 @@ NN = O(n^2) want de while loopt triggerd steeds een nieuwe for loop
 '''
 Bronnen : 
 https://jupyter.brynmawr.edu/services/public/dblank/jupyter.cs/FLAIRS-2015/TSPv3.ipynb
+https://nbviewer.jupyter.org/url/norvig.com/ipython/TSP.ipynb
 https://stackoverflow.com/questions/7781260/how-can-i-represent-an-infinite-number-in-python
 
 '''
