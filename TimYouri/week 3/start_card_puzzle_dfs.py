@@ -65,11 +65,10 @@ def dfs(board, depth):
     if is_valid(board):
         if sum(map(".".__eq__, board.values())) == 0:
             dfs_solutions.append(board)
-            return True
+            return
         for card in ['K', 'Q', 'J', 'A']:
             board[depth] = card
             dfs(copy.deepcopy(board), depth+1)
-    return False
 
 
 def test():
@@ -99,4 +98,3 @@ dfs(start_board, 0)
 for i in dfs_solutions:
     print(i)
 print('dfs with backtracking found ', len(dfs_solutions), " solutions")
-
