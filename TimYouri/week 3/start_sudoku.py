@@ -78,35 +78,56 @@ def no_conflict(grid, c, val):
     return True
 
 def solve(grid):
-    # backtracking search for a solution (DFS)
-    frontier = []
-    visited_vertex = []
-    frontier.append(grid)
-    no_child = 0
 
     if isSolved(grid) is True:
         display(grid)
-        pass
+        return True
 
     for r in rows:
         for c in cols:
-            # print(str(r+c) + ": "+grid[r+c])
-            #lege plek
             if grid[r+c] == "123456789":
                 for n in range(1,10):
                     if no_conflict(grid, r+c, int(n)) is True:
-                        no_child += 1
                         # print("you could do " + str(n) + " on position: "+ str(r+c))
-                        #is a possible child
                         child = copy.deepcopy(grid)
                         child[r+c] = str(n)
-                        # print("Child " + str(no_child) + ":")
-                        # display(child)
-                        solve(child)
-                        child[r+c] = "123456789"
-                return
-    # display(grid)
+                        if make_arc_consistent(child, r+c, int(n)):
+                            if(solve(child)):
+                                return True
+                            child[r+c] = "123456789"
+                return False
 
+
+def make_arc_consistent(grid, pos, v):
+    possibles = {}
+    changed = False
+
+    for r in rows:
+        for c in cols:
+            if grid[r+c] == "123456789":
+                for n in range(1,10):
+                    if no_conflict(grid, r+c, int(n)) is True:
+                        try:
+                            possibles[r+c].append(n)
+
+                        except:
+                            possibles[r+c] = [n]
+    # print(possibles)
+    for peer in peers[pos]:
+        if peer in possibles.keys():
+            if v in possibles[peer]:
+                if len(possibles[peer]) <= 1:
+                    return False
+                else:
+                    possibles[peer].pop(v)
+                    changed = True
+
+    if changed:
+        for key in possibles:
+            if len(possibles[key]) == 1 and possibles[key] != v:
+                if not make_arc_consistent(grid, key, possibles[key]):
+                    return False
+    return True
 
 def isSolved(grid):
     for r in rows:
@@ -114,33 +135,6 @@ def isSolved(grid):
             if grid[r + c] == "123456789":
                 return False
     return True
-
-
-
-    # while True:
-    #
-    #     if len(frontier) == 0:
-    #         print("No solution found")
-    #         break
-    #
-    #     selected_node = frontier.pop()
-    #     visited_vertex.append(selected_node)
-
-        # if selected_node == solution:
-        #     print(selected_node)
-        #     break
-
-        # extending the node
-        # new_nodes = selected_node+1
-        #
-        # for node in new_nodes:
-        #     if node not in visited_vertex and node not in frontier:
-        #         frontier.append(node)
-
-
-
-
-    pass
 
 # minimum nr of clues for a unique solution is 17
 slist = [None for x in range(20)]
@@ -171,8 +165,7 @@ for i,sudo in enumerate(slist):
     d = parse_string_to_dict(sudo)
     start_time = time.time()
     display(d)
-    solve(d)
-    # display(solve(d))
+    print(solve(d))
     end_time = time.time()
     hours, rem = divmod(end_time-start_time, 3600)
     minutes, seconds = divmod(rem, 60)
