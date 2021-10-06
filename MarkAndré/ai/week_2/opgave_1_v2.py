@@ -90,16 +90,18 @@ def reverse_segment_if_better(tour, i, j):
     # Given Tour from Nearest Neigbour or any other tour will do
     # I = J=
     # Given tour [...A,B...C,D...], consider reversing B...C to get [...A,C...B,D...]
-
-    A = tour[i-1]
-    B = tour[i]
-    C = tour[j-1]
-    D = tour[j % len(tour)]
+    print(tour)
+    print(i)
+    print(j)
+    #A = tour[i-1]
+    #B = tour[i]
+    #C = tour[j-1]
+    #D = tour[j % len(tour)]
 
     # Are old links (AB + CD) longer than new ones (AC + BD)? If so, reverse segment.
-    if distance(A, B) + distance(C, D) > distance(A, C) + distance(B, D):
-        tour[i:j] = reversed(tour[i:j])
-    return tour
+    #if distance(A, B) + distance(C, D) > distance(A, C) + distance(B, D):
+    #    tour[i:j] = reversed(tour[i:j])
+    #return tour
 
 
 def alter_tour(tour):
@@ -121,10 +123,16 @@ def all_segments(N):
 def improve_nn_tsp(cities): return alter_tour(nearest_neighbour(cities))
 
 generate_cities = make_cities(10)
+test_set = [City(x=493, y=950), City(x=640, y=708), City(x=694, y=606), City(x=506, y=535), City(x=354, y=358), City(x=391, y=252), City(x=200, y=293), City(x=495, y=1), City(x=752, y=280), City(x=941, y=221)]
 
 # 1A
-plot_tsp(nearest_neighbour, generate_cities)
-plot_tsp(improve_nn_tsp, generate_cities)
+#plot_tsp(nearest_neighbour, generate_cities)
+#tour = nearest_neighbour(generate_cities)
+#reverse_segment_if_better(test_set, test_set[0], test_set[-1])
+print(all_segments(4))
+
+
+#plot_tsp(improve_nn_tsp, generate_cities)
 # Standaard
 # give a demo with 10 cities using brute force
 #plot_tsp(try_all_tours, generate_cities)
