@@ -112,43 +112,44 @@ def print_solution(solution, row_has_1_at):
             colnr = c%4
             D[rownr][colnr] = symbol
 
-    printBord = 1
+    printBord = True
     for i in D:
-        if '  ' in i:
-            printBord = 0
+        if '  ' in i: # als er een lege plek in staat == past niet
+            printBord = False
 
     if printBord:
         print('------------------------')
+        print(solution)
         for i in D:
             print(i)
 
 def solve(r, row_valid, col_valid, row_has_1_at, col_has_1_at, solution):
-    res = cover(r, row_valid, col_valid, row_has_1_at, col_has_1_at)
-    row_valid = res[0]
-    col_valid = res[1]
-    solution.append(r)
-    changed = True
-    row = 0
+    solution.append(r) # set zet in list met gestappen zetten
 
-    while row != -1:
-        changed = False
-        row = -1
-        for x in range(len(row_valid)):
-            if row_valid[x] == 1 and not x in solution:
+    res = cover(r, row_valid, col_valid, row_has_1_at, col_has_1_at) # deactiveer rows en cols met een 1 op  op dezelfde col als r
+    row_valid = res[0] # apply changes
+    col_valid = res[1] # apply changes
+    row = 0 # initaliseer row, wordt gebruikt om de te loopen totdat er geen veraderingen gebeuren
+
+    while row != -1: # loop
+        row = -1 #default waarde
+        for x in range(len(row_valid)): # voor elke row
+            if row_valid[x] == 1 and not x in solution: # als de row niet gecovered is en nog niet is gebruikt
                 row = x
-        if row != -1:
-            res = cover(row, row_valid, col_valid, row_has_1_at, col_has_1_at)
-            if row_valid != res[0]:
-                changed = True
+        if row != -1: # als er een row si dat nog niet gebruikt is apply algorithm x
+            res = cover(row, row_valid, col_valid, row_has_1_at, col_has_1_at)  # deactiveer rows en cols met een 1 op dezelfde col als row
 
-            row_valid = res[0]
-            col_valid = res[1]
-            solution.append(row)
+            row_valid = res[0] # apply changes
+            col_valid = res[1] # apply changes
+            solution.append(row) # zet gestappen zet in list
 
-    return solution, row_has_1_at
+    return solution, row_has_1_at # return gestappen zetten en welke rows valid zijn
+
 mx = make_matrix(triominoes)
 
-for x in range(NR_OF_ROWS):
+for x in range(NR_OF_ROWS): # voor elke row
     halt_fl, row_valid, col_valid, row_has_1_at, col_has_1_at = prepare(mx)
-    sol = solve(x, row_valid, col_valid, row_has_1_at, col_has_1_at, [])
+
+    sol = solve(x, row_valid, col_valid, row_has_1_at, col_has_1_at, []) # doe algorithm x met x als beginnende row
+
     print_solution(sol[0], sol[1])
