@@ -127,6 +127,9 @@ def make_arc_consistent(grid, pos, v):
             if len(possibles[key]) == 1 and possibles[key] != v:
                 if not make_arc_consistent(grid, key, possibles[key]):
                     return False
+
+    # print("the possibles are: ")
+    # print(possibles)
     return True
 
 def isSolved(grid):
