@@ -79,44 +79,61 @@ def no_conflict(grid, c, val):
 
 def solve(grid):
 
+    possibles = getPossibles(grid)
+
     if isSolved(grid) is True:
+        # for pos in possibles:
+        #     grid[pos] = str(possibles[pos])
+        print("Solution:")
         display(grid)
         return True
 
-    for r in rows:
-        for c in cols:
-            if grid[r+c] == "123456789":
-                for n in range(1,10):
-                    if no_conflict(grid, r+c, int(n)) is True:
-                        # print("you could do " + str(n) + " on position: "+ str(r+c))
-                        child = copy.deepcopy(grid)
-                        child[r+c] = str(n)
-                        if make_arc_consistent(child, r+c, int(n)):
-                            if(solve(child)):
-                                return True
-                            child[r+c] = "123456789"
+
+    for pos in possibles:
+        if len(possibles[pos]) > 1:
+            for x in possibles[pos]:
+                # print("x in possibles[pos] :" + str(pos) + str(possibles[pos]))
+                if no_conflict(grid, pos, x) is True:
+                    child = grid.copy()
+                    child[pos] = int(x)
+                    print('main possibles:')
+                    display(possibles)
+                    if make_arc_consistent(child, pos, child[pos]):
+                        if solve(child):
+                            return True
+                        child[pos] = "123456789"
+
                 return False
+
+    # for r in rows:
+    #     for c in cols:
+    #         if grid[r+c] == "123456789":
+    #             for n in range(1,10):
+    #                 if no_conflict(grid, r+c, int(n)) is True:
+    #                     # print("you could do " + str(n) + " on position: "+ str(r+c))
+    #                     child = grid.copy()
+    #                     child[r+c] = str(n)
+    #                     if make_arc_consistent(child, r+c, int(n)):
+    #                         if(solve(child)):
+    #                             return True
+    #                         child[r+c] = "123456789"
+    #             return False
 
 
 def make_arc_consistent(grid, pos, v):
-    possibles = {}
+    possibles = getPossibles(grid)
     changed = False
+    print("Arc consistency with: " + str(pos)+ " = " + str(v) )
+    display(possibles)
 
-    for r in rows:
-        for c in cols:
-            if grid[r+c] == "123456789":
-                for n in range(1,10):
-                    if no_conflict(grid, r+c, int(n)) is True:
-                        try:
-                            possibles[r+c].append(n)
 
-                        except:
-                            possibles[r+c] = [n]
     # print(possibles)
     for peer in peers[pos]:
         if peer in possibles.keys():
             if v in possibles[peer]:
+                print(possibles[peer])
                 if len(possibles[peer]) <= 1:
+                    print('kanniet')
                     return False
                 else:
                     possibles[peer].pop(v)
@@ -125,6 +142,7 @@ def make_arc_consistent(grid, pos, v):
     if changed:
         for key in possibles:
             if len(possibles[key]) == 1 and possibles[key] != v:
+                print(possibles[key])
                 if not make_arc_consistent(grid, key, possibles[key]):
                     return False
 
@@ -133,34 +151,67 @@ def make_arc_consistent(grid, pos, v):
     return True
 
 def isSolved(grid):
+
+
+    # for r in rows:
+    #     for c in cols:
+    #         try:
+    #             if len(possibles[r+c]) != 1:
+    #                 return False
+    #         except:
+    #             return False
+    # return True
     for r in rows:
         for c in cols:
             if grid[r + c] == "123456789":
                 return False
     return True
 
+
+
+
+
+def getPossibles(grid):
+    possibles = {}
+    for r in rows:
+        for c in cols:
+            if grid[r+c] == "123456789":
+                for n in range(1,10):
+                    if no_conflict(grid, r+c, int(n)) is True:
+                        try:
+                            possibles[r+c].append(str(n))
+
+                        except:
+                            possibles[r+c] = [str(n)]
+            else:
+                if no_conflict(grid, r + c, grid[r+c]) is True:
+                    # print("pos: " + str(possibles[r+c]) + 'value: ' + str(grid[r+c]))
+                    possibles[r+c] = [str(grid[r+c])]
+
+    return possibles
+
 # minimum nr of clues for a unique solution is 17
-slist = [None for x in range(20)]
+slist = [None for x in range(1)]
 slist[0] = '.56.1.3....16....589...7..4.8.1.45..2.......1..42.5.9.1..4...899....16....3.6.41.'
-slist[1] = '.6.2.58...1....7..9...7..4..73.4..5....5..2.8.5.6.3....9.73....1.......93......2.'
-slist[2] = '.....9.73.2.....569..16.2.........3.....1.56..9....7...6.34....7.3.2....5..6...1.'
-slist[3] = '..1.3....5.917....8....57....3.1.....8..6.59..2.9..8.........2......6...315.9...8'
-slist[4] = '....6.8748.....6.3.....5.....3.4.2..5.2........72...35.....3..........69....96487'
-slist[5] = '.94....5..5...7.6.........71.2.6.........2.19.6...84..98.......51..9..78......5..'
-slist[6] = '.5...98..7...6..21..2...6..............4.598.461....5.54.....9.1....87...2..5....'
-slist[7] = '...17.69..4....5.........14.....1.....3.5716..9.....353.54.9....6.3....8..4......'
-slist[8] = '..6.4.5.......2.3.23.5..8765.3.........8.1.6.......7.1........5.6..3......76...8.'
-slist[9] = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-slist[10]= '85...24..72......9..4.........1.7..23.5...9...4...........8..7..17..........36.4.'
-slist[11]= '...5....2...3..85997...83..53...9...19.73...4...84...1.471..6...5...41...1...6247'
-slist[12]= '.....6....59.....82....8....45........3........6..3.54...325..6..................'
-slist[13]= '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-slist[14]= '8..........36......7..9.2...5...7.......457.....1...3...1....68..85...1..9....4..'
-slist[15]= '6..3.2....5.....1..........7.26............543.........8.15........4.2........7..'
-slist[16]= '.6.5.1.9.1...9..539....7....4.8...7.......5.8.817.5.3.....5.2............76..8...'
-slist[17]= '..5...987.4..5...1..7......2...48....9.1.....6..2.....3..6..2.......9.7.......5..'
-slist[18]= '3.6.7...........518.........1.4.5...7.....6.....2......2.....4.....8.3.....5.....'
-slist[19]= '1.....3.8.7.4..............2.3.1...........958.........5.6...7.....8.2...4.......'
+# slist[1] = '.6.2.58...1....7..9...7..4..73.4..5....5..2.8.5.6.3....9.73....1.......93......2.'
+# slist[2] = '.....9.73.2.....569..16.2.........3.....1.56..9....7...6.34....7.3.2....5..6...1.'
+# slist[3] = '..1.3....5.917....8....57....3.1.....8..6.59..2.9..8.........2......6...315.9...8'
+# slist[4] = '....6.8748.....6.3.....5.....3.4.2..5.2........72...35.....3..........69....96487'
+# slist[5] = '.94....5..5...7.6.........71.2.6.........2.19.6...84..98.......51..9..78......5..'
+# slist[6] = '.5...98..7...6..21..2...6..............4.598.461....5.54.....9.1....87...2..5....'
+# slist[7] = '...17.69..4....5.........14.....1.....3.5716..9.....353.54.9....6.3....8..4......'
+# slist[8] = '..6.4.5.......2.3.23.5..8765.3.........8.1.6.......7.1........5.6..3......76...8.'
+# slist[9] = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+# slist[10]= '85...24..72......9..4.........1.7..23.5...9...4...........8..7..17..........36.4.'
+# slist[11]= '...5....2...3..85997...83..53...9...19.73...4...84...1.471..6...5...41...1...6247'
+# slist[12]= '.....6....59.....82....8....45........3........6..3.54...325..6..................'
+# slist[13]= '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+# slist[14]= '8..........36......7..9.2...5...7.......457.....1...3...1....68..85...1..9....4..'
+# slist[15]= '6..3.2....5.....1..........7.26............543.........8.15........4.2........7..'
+# slist[16]= '.6.5.1.9.1...9..539....7....4.8...7.......5.8.817.5.3.....5.2............76..8...'
+# slist[17]= '..5...987.4..5...1..7......2...48....9.1.....6..2.....3..6..2.......9.7.......5..'
+# slist[18]= '3.6.7...........518.........1.4.5...7.....6.....2......2.....4.....8.3.....5.....'
+# slist[19]= '1.....3.8.7.4..............2.3.1...........958.........5.6...7.....8.2...4.......'
 
 for i,sudo in enumerate(slist):
     print('*** sudoku {0} ***'.format(i))
