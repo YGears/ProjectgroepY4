@@ -26,7 +26,6 @@ def draw_graph(data):
     plt.xlabel("Populatie (10k personen)")
     plt.ylabel("winst (10ks)")
     plt.ion() # to non block
-
     plt.show()
     plt.pause(0.001) # to make update happen
 
@@ -61,7 +60,7 @@ def compute_cost(X, y, theta):
     errors = (predictions - y) ** 2
     J_val = sum(errors) / m
 
-    return J_val
+    return J_val/2
 
 
 

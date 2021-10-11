@@ -29,8 +29,7 @@ m,n = data.shape
 m,n = data.shape
 X = np.c_[np.ones(m), data[:, [0]]]
 y = data[:, [1]]
-# theta = np.zeros( (2, 1) )
-theta = np.ones((2, 1))
+theta = np.zeros( (2, 1) )
 # ========================  OPGAVE 1 ========================
 # print ("\nOpgave 1: draw_graph")
 # print ("Tekenen van de scatter plot van de data...")
@@ -42,7 +41,6 @@ theta = np.ones((2, 1))
 print ("\nOpgave 2: compute_cost")
 a = [[1.,1.],[1.,4.],[1.,3.],[1.,4.]]
 b = np.array([[0.5,2]])
-# print(np.dot(a, b))
 J = compute_cost(X, y, theta);
 print (f"De gevonden waarde van J is {J}")
 print ("Deze waarde zou rond de 32.07 moeten liggen")
