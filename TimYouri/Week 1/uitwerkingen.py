@@ -57,7 +57,6 @@ def compute_cost(X, y, theta):
     for i in range(m):
         c, d = X[i]
         hyp_values.append(theta[0] * d)
-        print(hyp_values[i])
         total += (hyp_values[i] - y[i]) ** 2
 
     return total * (1 / (2 * m))
