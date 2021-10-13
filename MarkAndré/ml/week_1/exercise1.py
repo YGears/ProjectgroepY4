@@ -31,11 +31,11 @@ X = np.c_[np.ones(m), data[:, [0]]]
 y = data[:, [1]]
 theta = np.zeros( (2, 1) )
 # ========================  OPGAVE 1 ========================
-# print ("\nOpgave 1: draw_graph")
-# print ("Tekenen van de scatter plot van de data...")
-# if (len(sys.argv)>1 and sys.argv[1]=='skip'): print ('Slaan we over!')
-# else: draw_graph(data)
-# input ("Druk op return om verder te gaan...");
+print ("\nOpgave 1: draw_graph")
+print ("Tekenen van de scatter plot van de data...")
+if (len(sys.argv)>1 and sys.argv[1]=='skip'): print ('Slaan we over!')
+#else: draw_graph(data)
+#input ("Druk op return om verder te gaan...");
 
 # ========================  OPGAVE 2 ========================
 print ("\nOpgave 2: compute_cost")
@@ -45,7 +45,7 @@ J = compute_cost(X, y, theta);
 print (f"De gevonden waarde van J is {J}")
 print ("Deze waarde zou rond de 32.07 moeten liggen")
 
-input ("Druk op return om verder te gaan...");
+#input ("Druk op return om verder te gaan...");
 
 # ========================  OPGAVE 3 ========================
 print ("\nOpgave 3a: gradient_descent")

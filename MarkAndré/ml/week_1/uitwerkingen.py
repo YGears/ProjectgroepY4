@@ -19,8 +19,8 @@ def draw_graph(data):
     # Om deze constructie in dit specifieke geval te kunnen gebruiken, moet de data-matrix wel eerst
     # roteren (waarom?).
     # Maak gebruik van pytplot.scatter om dit voor elkaar te krijgen.
+    #print(data)
     for x, y in data:
-        # plt.plot(x, y, 'bo')
         plt.scatter(x,y)
     plt.draw()
     plt.xlabel("Populatie (10k personen)")
@@ -82,23 +82,34 @@ def gradient_descent(X, y, theta, alpha, num_iters):
     costs = []
 
     # YOUR CODE HERE
+    #https://towardsdatascience.com/gradient-descent-in-python-a0d07285742f
+    # Evt coments volgen nog
 
-    # aan het eind van deze loop retourneren we de nieuwe waarde van theta
-    # (wat is de dimensionaliteit van theta op dit moment?).
-    # YOUR CODE HERE
     for i in range(num_iters):
         prediction = np.dot(X, theta.T)
         deviation = (prediction - y)
         deviation = np.dot(X.T, deviation).T
         theta -= alpha * (deviation / m)
-        costs.append(theta)
 
+        #Wil ik gebruiken en storen met de int om de lijst van costs mee te vullen
+        # resulteer voor nu nog in een valueError compute_cost(X.T, y, theta)
+
+
+
+    # aan het eind van deze loop retourneren we de nieuwe waarde van theta
+    # (wat is de dimensionaliteit van theta op dit moment?).
     return theta, costs
 
-
-def draw_costs(data): 
+def draw_costs(data):
     # OPGAVE 3b
     # YOUR CODE HERE
+    print(data)
+    for x, y in data:
+        plt.plot(x, y)
+    plt.draw()
+    plt.ylabel("J(θ)")
+    plt.xlabel("iteraties")
+    plt.show()
 
     pass
 
@@ -113,7 +124,8 @@ def contour_plot(X, y):
     # transformatie moet toepassen of niet. Let op: je moet computeCost zelf *niet* aanpassen.
 
     fig = plt.figure()
-    ax = fig.gca(projection = '3d')
+    #ax = fig.gca(projection = '3d') https://stackoverflow.com/questions/67095247/gca-and-latest-version-of-matplotlib
+    ax = fig.add_subplot(projection='3d')
     jet = plt.get_cmap('jet')
 
     t1 = np.linspace(-10, 10, 100)
@@ -122,7 +134,15 @@ def contour_plot(X, y):
 
     J_vals = np.zeros( (len(t2), len(t2)) )
 
-    #YOUR CODE HERE 
+    #YOUR CODE HERE
+    #Comments volgen nog
+    for th1_i in range(len(t1)):
+        for th2_i in range(len(t2)):
+            th1 = t1[th1_i]
+            th2 = t2[th2_i]
+            theta = np.array([[th1, th2]])
+            ans = compute_cost(X, y, theta.T)
+            J_vals[th1_i, th2_i] = ans
 
     surf = ax.plot_surface(T1, T2, J_vals, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 
