@@ -25,10 +25,7 @@ def draw_graph(data):
     plt.draw()
     plt.xlabel("Populatie (10k personen)")
     plt.ylabel("winst (10ks)")
-    plt.ion() # to non block
     plt.show()
-    plt.pause(0.001) # to make update happen
-
 
 
 def compute_cost(X, y, theta):
@@ -63,7 +60,6 @@ def compute_cost(X, y, theta):
     return J_val/2
 
 
-
 def gradient_descent(X, y, theta, alpha, num_iters):
     #OPGAVE 3a
     # In deze opgave wordt elke parameter van theta num_iter keer geüpdate om de optimale waarden
@@ -89,6 +85,13 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 
     # aan het eind van deze loop retourneren we de nieuwe waarde van theta
     # (wat is de dimensionaliteit van theta op dit moment?).
+    # YOUR CODE HERE
+    for i in range(num_iters):
+        prediction = np.dot(X, theta.T)
+        deviation = (prediction - y)
+        deviation = np.dot(X.T, deviation).T
+        theta -= alpha * (deviation / m)
+        costs.append(theta)
 
     return theta, costs
 
@@ -96,6 +99,7 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 def draw_costs(data): 
     # OPGAVE 3b
     # YOUR CODE HERE
+
     pass
 
 def contour_plot(X, y):
