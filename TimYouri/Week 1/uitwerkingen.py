@@ -57,7 +57,7 @@ def compute_cost(X, y, theta):
     for i in range(m):
         c, d = X[i]
         hyp_values.append(theta[0] * d)
-        print(hyp_values[i])
+        # print(hyp_values[i])
         total += (hyp_values[i] - y[i]) ** 2
 
     return total * (1 / (2 * m))
@@ -84,12 +84,21 @@ def gradient_descent(X, y, theta, alpha, num_iters):
     m, n = X.shape
     costs = []
 
+
+    for i in range(num_iters):
+        prediction = np.dot(X, theta.T)
+        deviation = (prediction - y)
+        deviation = np.dot(X.T, deviation).T
+        theta -= alpha * (deviation / m)
+        costs.append(compute_cost(X, y, theta.T))
+
     # YOUR CODE HERE
 
     # aan het eind van deze loop retourneren we de nieuwe waarde van theta
     # (wat is de dimensionaliteit van theta op dit moment?).
 
     return theta, costs
+
 
 
 def draw_costs(data):
@@ -119,6 +128,13 @@ def contour_plot(X, y):
     J_vals = np.zeros((len(t2), len(t2)))
 
     # YOUR CODE HERE
+    for th1_i in range(len(t1)):
+        for th2_i in range(len(t2)):
+            th1 = t1[th1_i]
+            th2 = t2[th2_i]
+            theta = np.array([[th1, th2]])
+            ans = compute_cost(X, y, theta.T)
+            J_vals[th1_i, th2_i] = ans
 
     surf = ax.plot_surface(T1, T2, J_vals, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 
