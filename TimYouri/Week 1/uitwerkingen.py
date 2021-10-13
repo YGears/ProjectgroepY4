@@ -51,16 +51,14 @@ def compute_cost(X, y, theta):
     # YOUR CODE HERE
 
     m = len(X)
+    total = 0
 
     for i in range(len(theta)):
-        mutated = []
+        multi_matrix = []
         for i in range(len(X)):
-            mutated.append(X[i] * theta)
-
-    total = 0
+            multi_matrix.append(X[i] * theta)
     for i in range(m):
-        squared_error = (mutated[i] - y[i]) ** 2
-        total += squared_error
+        total += (multi_matrix[i] - y[i]) ** 2
 
     return total * (1 / (2 * m))
 
