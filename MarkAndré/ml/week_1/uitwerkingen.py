@@ -21,7 +21,7 @@ def draw_graph(data):
     # Maak gebruik van pytplot.scatter om dit voor elkaar te krijgen.
     #print(data)
     for x, y in data:
-        plt.scatter(x,y)
+        plt.scatter(x,y, color="blue")
     plt.draw()
     plt.xlabel("Populatie (10k personen)")
     plt.ylabel("winst (10ks)")
@@ -90,6 +90,7 @@ def gradient_descent(X, y, theta, alpha, num_iters):
         deviation = (prediction - y)
         deviation = np.dot(X.T, deviation).T
         theta -= alpha * (deviation / m)
+        costs.append(compute_cost(X, y, theta.T))
 
         #Wil ik gebruiken en storen met de int om de lijst van costs mee te vullen
         # resulteer voor nu nog in een valueError compute_cost(X.T, y, theta)
@@ -103,15 +104,11 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 def draw_costs(data):
     # OPGAVE 3b
     # YOUR CODE HERE
-    print(data)
-    for x, y in data:
-        plt.plot(x, y)
+    plt.plot(range(len(data)),data, color="blue")
     plt.draw()
     plt.ylabel("J(θ)")
     plt.xlabel("iteraties")
     plt.show()
-
-    pass
 
 def contour_plot(X, y):
     #OPGAVE 4
