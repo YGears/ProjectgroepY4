@@ -51,18 +51,20 @@ def compute_cost(X, y, theta):
     # YOUR CODE HERE
 
     m = len(X)
-    hyp_values = []
-    total = 0
 
+    for i in range(len(theta)):
+        mutated = []
+        for i in range(len(X)):
+            mutated.append(X[i] * theta)
+
+    total = 0
     for i in range(m):
-        c, d = X[i]
-        hyp_values.append(theta[0] * d)
-        total += (hyp_values[i] - y[i]) ** 2
+        squared_error = (mutated[i] - y[i]) ** 2
+        total += squared_error
 
     return total * (1 / (2 * m))
 
-
-def gradient_descent(X, y, theta, alpha, num_iters):
+def gradient_descent(X, ay, theta, alpha, num_iters):
     # OPGAVE 3a
     # In deze opgave wordt elke parameter van theta num_iter keer geüpdate om de optimale waarden
     # voor deze parameters te vinden. Per iteratie moet je alle parameters van theta update.
