@@ -104,6 +104,12 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 def draw_costs(data):
     # OPGAVE 3b
     # YOUR CODE HERE
+    plt.plot(range(len(data)),data, color="blue")
+    plt.draw()
+    plt.ylabel("J(θ)")
+    plt.xlabel("iteraties")
+    plt.title("Opgave 3B")
+    plt.show()
     pass
 
 
