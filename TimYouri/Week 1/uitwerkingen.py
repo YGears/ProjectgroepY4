@@ -50,17 +50,29 @@ def compute_cost(X, y, theta):
     #    5. tal al deze kwadraten bij elkaar op en deel dit door twee keer het aantal datapunten
     # YOUR CODE HERE
 
-    m = len(X)
-    hyp_values = []
-    total = 0
+    # m = len(X)
+    # hyp_values = []
+    # total = 0
+    #
+    # for i in range(m):
+    #     c, d = X[i]
+    #     hyp_values.append(theta[0] * d)
+    #     # print(hyp_values[i])
+    #     total += (hyp_values[i] - y[i]) ** 2
+    #
+    # return total * (1 / (2 * m))
 
-    for i in range(m):
-        c, d = X[i]
-        hyp_values.append(theta[0] * d)
-        # print(hyp_values[i])
-        total += (hyp_values[i] - y[i]) ** 2
+    # aantal rijen in y, gelijk aan totaal aantal observaties, X.shape[0] had ook gewerkt.
+    m = y.shape[0]
 
-    return total * (1 / (2 * m))
+    # hoxi is de verwachte waarde (hθ(x(i))
+    hoxi = np.dot(X, theta)
+    #delta 2 is delta in het kwadraat,delta het verschil tussen hoxi en actuele waarde van observatie (y)
+    delta2 = (hoxi - y) ** 2
+    #J_val is de laatste stap voor de kostenfunctie waar de gemiddelde kosten worden bepaald voor alle observaties
+    J_val = (sum(delta2) / m) / 2
+
+    return J_val
 
 
 def gradient_descent(X, y, theta, alpha, num_iters):
@@ -92,8 +104,6 @@ def gradient_descent(X, y, theta, alpha, num_iters):
         theta -= alpha * (deviation / m)
         costs.append(compute_cost(X, y, theta.T))
 
-    # YOUR CODE HERE
-
     # aan het eind van deze loop retourneren we de nieuwe waarde van theta
     # (wat is de dimensionaliteit van theta op dit moment?).
 
@@ -106,9 +116,9 @@ def draw_costs(data):
     # YOUR CODE HERE
     plt.plot(range(len(data)),data, color="blue")
     plt.draw()
-    plt.ylabel("J(θ)")
-    plt.xlabel("iteraties")
-    plt.title("Opgave 3B")
+    plt.ylabel("J(θ) : Kostenfunctie")
+    plt.xlabel("Generaties")
+    plt.title("Opgave 3b")
     plt.show()
     pass
 
