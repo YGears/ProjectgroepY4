@@ -25,6 +25,7 @@ def draw_graph(data):
     plt.draw()
     plt.xlabel("Populatie (10k personen)")
     plt.ylabel("winst (10ks)")
+    plt.title("Opgave 1")
     plt.show()
 
 
@@ -55,9 +56,9 @@ def compute_cost(X, y, theta):
     m = y.shape[0]  # aantal observaties, als het goed is, is dit hetzelfde als X.shape[0]
     predictions = np.dot(X, theta)
     errors = (predictions - y) ** 2
-    J_val = sum(errors) / m
+    J_val = (sum(errors) / m) / 2
 
-    return J_val/2
+    return J_val
 
 
 def gradient_descent(X, y, theta, alpha, num_iters):
@@ -92,11 +93,6 @@ def gradient_descent(X, y, theta, alpha, num_iters):
         theta -= alpha * (deviation / m)
         costs.append(compute_cost(X, y, theta.T))
 
-        #Wil ik gebruiken en storen met de int om de lijst van costs mee te vullen
-        # resulteer voor nu nog in een valueError compute_cost(X.T, y, theta)
-
-
-
     # aan het eind van deze loop retourneren we de nieuwe waarde van theta
     # (wat is de dimensionaliteit van theta op dit moment?).
     return theta, costs
@@ -108,6 +104,7 @@ def draw_costs(data):
     plt.draw()
     plt.ylabel("J(θ)")
     plt.xlabel("iteraties")
+    plt.title("Opgave 3B")
     plt.show()
 
 def contour_plot(X, y):

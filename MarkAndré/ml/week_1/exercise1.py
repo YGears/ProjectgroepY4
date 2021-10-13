@@ -44,7 +44,6 @@ b = np.array([[0.5,2]])
 J = compute_cost(X, y, theta);
 print (f"De gevonden waarde van J is {J}")
 print ("Deze waarde zou rond de 32.07 moeten liggen")
-
 #input ("Druk op return om verder te gaan...");
 
 # ========================  OPGAVE 3 ========================
@@ -55,9 +54,8 @@ theta = np.zeros( (1,2) )
 theta, costs = gradient_descent(X, y, theta, alpha, num_iters)
 print (f"De gevonden waarde voor theta={theta[0]}")
 print ("Deze waarde zou rond de [-3.63, 1.16] moeten liggen.")
-print (f"De kost met deze waarde van theta is {compute_cost(X, y, theta.T)}")
+print (f"\nDe kost met deze waarde van theta is {compute_cost(X, y, theta.T)}")
 print ("Die zou zo rond de 4.48 moeten liggen.")
-print(costs)
 input ("Druk op return om verder te gaan...")
 # ========================  OPGAVE 4 ========================
 print ("\nOpgave 3b: draw_costs")
