@@ -9,6 +9,7 @@ def plot_number(nrVector):
     # laatste index het langzaamst; als je dat niet doet, wordt het plaatje 
     # gespiegeld en geroteerd. Zie de documentatie op 
     # https://docs.scipy.org/doc/numpy/reference/generated/numpy.reshape.html
+
     reshaped = np.reshape(nrVector,(20, 20), order = 'F')
     plt.matshow(reshaped)
     plt.show()
@@ -20,7 +21,8 @@ def sigmoid(z):
     # vector is.
     # Maak gebruik van de methode exp() in NumPy.
 
-    pass
+    # sigmoid = 1 / (1 + np.exp(-z))
+    return 1 / (1 + np.exp(-z))
 
 
 # ==== OPGAVE 2b ====
