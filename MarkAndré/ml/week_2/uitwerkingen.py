@@ -36,7 +36,17 @@ def get_y_matrix(y, m):
     # y en m
 
     #YOUR CODE HERE
-    pass
+    # (Alle getallen)-1, omdat een matrix niet zero based
+    cols = y.T[0] - 1
+    # Lijst (size=m) met index nummers
+    rows = [i for i in range(m)]
+    # Lijst met alleen 1'en
+    data = [1 for _ in range(m)]
+    # arrays zijn zero-based
+    width = max(cols) + 1
+    # compressed sparse row-matrix
+    y_vec = csr_matrix((data, (rows, cols)), shape=(m, width)).toarray()
+    return y_vec
 
 # ==== OPGAVE 2c ==== 
 # ===== deel 1: =====
