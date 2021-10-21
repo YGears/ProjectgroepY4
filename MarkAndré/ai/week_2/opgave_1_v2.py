@@ -33,12 +33,13 @@ def tour_length(tour):
     return sum(distance(tour[i], tour[i-1]) for i in range(len(tour)))
 
 
-def make_cities(n, width=1000, height=1000):
+def make_cities(n, width=1000, height=1000, seed =None):
     # make a set of n cities, each with random coordinates within a rectangle (width x height).
 
-    random.seed() # the current system time is used as a seed
-                  # note: if we use the same seed, we get the same set of cities
-
+    # the current system time is used as a seed
+    # note: if we use the same seed, we get the same set of cities
+    # random.seed()
+    random.seed(seed if seed is not None else time.time())
     return frozenset(City(random.randrange(width), random.randrange(height)) for c in range(n))
 
 
@@ -61,81 +62,109 @@ def plot_tsp(algorithm, cities):
     print("Start plotting ...")
     plot_tour(tour)
 
+# Versie 1A
+# unvisited = set(cities)
+# start = unvisited.pop()
+# tour = [start]
 
 # Opdracht 1A
 def nearest_neighbour(cities):
-    # Versie 1
-    # unvisited = set(cities)
-    # start = unvisited.pop()
-    # tour = [start]
     start = next(iter(cities))                  # determine the starting point
     tour = [start]                              # list of to store the tour/route
     unvisited = set(cities - {start})           # set that keeps track of any unvisited cities
+
     while unvisited:
-        closest_city = City(x=math.inf, y=math.inf)  # create a nearest city using dummy values
+        # for every city in unvisited check if the distance  between exp AB is shorter than AC
+        # by looping all cities for city A we now what the closest city to A is.
+        # than we add it to the tour and move on with the next city
+
+        # create a nearest city using dummy values
+        closest_city = City(x=math.inf, y=math.inf)
         for city in unvisited:
             if distance(start, city) < distance(start, closest_city):
-                # for every city in unvisited check if the distance  between exp AB is shorter than AC
-                # by looping all cities for city A we now what the closest city to A is.
-                # than we add it to the tour and move on with the next city
                 closest_city = city
 
-        tour.append(closest_city)               # this is the closest city add it to the tour
-        start = closest_city                    # the closest city while now be your next starting point
-        unvisited.remove(closest_city)          # removes the city from the unvisited list since it is now visited
+        tour.append(closest_city)       # this is the closest city add it to the tour
+        start = closest_city            # the closest city while now be your next starting point
+        unvisited.remove(closest_city)  # removes the city from the unvisited list since it is now visited
     return tour
 
-
-def reverse_segment_if_better(tour, i, j):
-    # Given Tour from Nearest Neigbour or any other tour will do
-    # I = J=
-    # Given tour [...A,B...C,D...], consider reversing B...C to get [...A,C...B,D...]
-    print(tour)
-    print(i)
-    print(j)
-    #A = tour[i-1]
-    #B = tour[i]
-    #C = tour[j-1]
-    #D = tour[j % len(tour)]
-
-    # Are old links (AB + CD) longer than new ones (AC + BD)? If so, reverse segment.
-    #if distance(A, B) + distance(C, D) > distance(A, C) + distance(B, D):
-    #    tour[i:j] = reversed(tour[i:j])
-    #return tour
+'''
+# Opdracht 1C/D
+def two_opt_swap(route, i, k):
+    # 1. take route[0] to route[i-1] and add them in order to new_route
+    # 2. take route[i] to route[k] and add them in reverse order to new_route
+    # 3. take route[k+1] to end and add them in order to new_route
+    new_route = route[:i] + list(reversed(route[i:k])) + route[k:]
+    return new_route
 
 
-def alter_tour(tour):
-    "Try to alter tour for the better by reversing segments."
+# Opdracht 1D
+def nearest_neighbour_2opt(cities):
+    # Function that applies the 2opt swap in order to improve its tour length
+    # returns tour when no improvements can be made
+    tour = nearest_neighbour(cities)        # use a existing tour
+    improved = True
+
+    while improved:
+        # While there is an improvement to be made ......
+        best_tour_length = tour_length(tour)
+        improved = False
+
+        # number of cities/nodes eligible to be swapped
+        for i in range(len(tour)-1):        # het aantal nodes gaat elke mogelijke node bij langs daarom is de tijd nog te hoog
+            for k in range(i+1, len(tour)):
+                # Try a new tour using the 2opt swap
+                new_tour = two_opt_swap(tour, i, k)
+                # Calculate the distance of this new tour
+                new_tour_length = tour_length(new_tour)
+
+                # if improvement can be made, improve and try again
+                if new_tour_length < best_tour_length:
+                    # The existing tour becomes the improved tour
+                    tour = new_tour
+                    best_tour_length = new_tour_length
+                    improved = True
+    return tour
+'''
+
+
+def nearest_neighbour_2opt(cities):
+    return improve_tour(nearest_neighbour(cities))
+
+def improve_tour(tour):
+    # Function to improve the tour by shorting the length of segments using two opt
     original_length = tour_length(tour)
+    # For every segment(start, end) in all combinations of segments of tour length
+    # Do the two opt
     for (start, end) in all_segments(len(tour)):
-        reverse_segment_if_better(tour, start, end)
-    # If we made an improvement, then try again; else stop and return tour.
+        two_opt_segment_swap(tour, start, end)
+    # If we made an improvement, then try again; else stop and return tour
     if tour_length(tour) < original_length:
-        return alter_tour(tour)
+        return improve_tour(tour)
     return tour
 
+def all_segments(tour_size):
+    # Return (start, end) pairs of indexes that form segments of tour of length N
+    # print([(start, start + length) for length in range(tour_size, 1, -1) for start in range(tour_size - length + 1)])
+    return [(start, start + length) for length in range(tour_size, 1, -1) for start in range(tour_size - length + 1)]
 
-def all_segments(N):
-    return [(i, i + length)
-            for length in reversed(range(2, N))
-            for i in reversed(range(N - length + 1))]
+def two_opt_segment_swap(tour, start, end):
+    # Take 4 cities, consider that AB and CD are connect try swap one city for another
+    A, B, C, D = tour[start-1], tour[start], tour[end-1], tour[end % len(tour)]
+    # If old links (AB + CD) are longer than new ones (AC + BD) then reverse segment
+    if distance(A, B) + distance(C, D) > distance(A, C) + distance(B, D):
+        tour[start:end] = reversed(tour[start:end])
+        return True
 
-def improve_nn_tsp(cities): return alter_tour(nearest_neighbour(cities))
 
-generate_cities = make_cities(10)
-test_set = [City(x=493, y=950), City(x=640, y=708), City(x=694, y=606), City(x=506, y=535), City(x=354, y=358), City(x=391, y=252), City(x=200, y=293), City(x=495, y=1), City(x=752, y=280), City(x=941, y=221)]
-
+generate_cities = make_cities(500, seed=2)
 # 1A
-#plot_tsp(nearest_neighbour, generate_cities)
-#tour = nearest_neighbour(generate_cities)
-#reverse_segment_if_better(test_set, test_set[0], test_set[-1])
-print(all_segments(4))
+plot_tsp(nearest_neighbour, generate_cities)
+# 1D
+plot_tsp(nearest_neighbour_2opt, generate_cities)
 
 
-#plot_tsp(improve_nn_tsp, generate_cities)
-# Standaard
-# give a demo with 10 cities using brute force
-#plot_tsp(try_all_tours, generate_cities)
 
 '''
 Opdracht 1 A
@@ -163,18 +192,21 @@ Tijd --> 0,164 secs
 '''
 Opdracht 1 C
 
-def check_if_inbound()
-    Pak van stad A x en y
-    Pak van stad B x en y
-    
-    If stad a = stad B
-        dan is er overlap en voeren we een volgende functie uit
-    else
-        none
+Is het noodzakleijk om te controleren of de nieuwe route korter is dan de oude? 
+(volgensmij niet want in de colleges werd benoemd dat als een route niet meer kruist dat hij dan altijd korter is. 
+
+Maar wij hebben geimpliceerd dat het bewerken van een connectie lijd tot een kortere route.
+Om deze door te voeren vergelijken wij hem wel doormiddel van de afstand
+
 '''
 
 '''
 Opdracht 1 D
+
+Bij seed 22 met 500 steden
+in 2,31250 s een lengte van 17500,6 ten opzichte van Nearest Neigbour met 20883,4
+Dit is ongv 19%
+Probeer je meerdere seeds zie je ongv een verbetering van 10% +/-
 
 '''
 
@@ -192,5 +224,5 @@ Bronnen :
 https://jupyter.brynmawr.edu/services/public/dblank/jupyter.cs/FLAIRS-2015/TSPv3.ipynb
 https://nbviewer.jupyter.org/url/norvig.com/ipython/TSP.ipynb
 https://stackoverflow.com/questions/7781260/how-can-i-represent-an-infinite-number-in-python
-
+https://en.wikipedia.org/wiki/2-opt
 '''

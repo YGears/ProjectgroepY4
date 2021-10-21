@@ -47,18 +47,25 @@ def compute_cost(X, y, theta):
     #    2. bepaal de voorspelling (dus elk punt van X maal de huidige waarden van theta)
     #    3. bereken het verschil tussen deze voorspelling en de werkelijke waarde
     #    4. kwadrateer dit verschil
-    #    5. tal al deze kwadraten bij elkaar op en deel dit door twee keer het aantal datapunten
+    #    5. tel al deze kwadraten bij elkaar op en deel dit door twee keer het aantal datapunten
 
-    J = 0
     # gegeven een matrix X met waarden van features
     # een vector y met actuele uitkomsten voor deze features
     # en een vector theta met waarden voor theta
-    m = y.shape[0]  # aantal observaties, als het goed is, is dit hetzelfde als X.shape[0]
-    predictions = np.dot(X, theta)
-    errors = (predictions - y) ** 2
-    J_val = (sum(errors) / m) / 2
 
-    return J_val
+    # m = amount of observations, *note should also be the same as X.shape[0]
+    m = y.shape[0]
+    # prediciton = for every point of x * the current value of theta
+    predictions = np.dot(X, theta)
+    # errors = (difference between prediction and actual value)
+    # we use the square on this error to get an absolute value
+    errors = (predictions - y) ** 2
+    # Optie A, count all squares and divide it by two times all datapoints
+    J = (sum(errors) / (2 * m))
+    # Optie B
+    # J = (sum(errors) / m) / 2
+    # return cost
+    return J
 
 
 def gradient_descent(X, y, theta, alpha, num_iters):
@@ -129,13 +136,16 @@ def contour_plot(X, y):
     J_vals = np.zeros( (len(t2), len(t2)) )
 
     #YOUR CODE HERE
-    #Comments volgen nog
+    # iterate through values of the first theta 
     for th1_i in range(len(t1)):
+        # iterate through values of the second theta
         for th2_i in range(len(t2)):
+            # store values of first and second theta
             th1 = t1[th1_i]
-            th2 = t2[th2_i]
+            th2 = t2[th2_i]       
             theta = np.array([[th1, th2]])
             ans = compute_cost(X, y, theta.T)
+            # Fill
             J_vals[th1_i, th2_i] = ans
 
     surf = ax.plot_surface(T1, T2, J_vals, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
