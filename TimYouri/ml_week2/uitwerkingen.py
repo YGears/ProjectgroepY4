@@ -47,7 +47,21 @@ def get_y_matrix(y, m):
     # van de matrix 10 (0-9), maar de methode moet werken voor elke waarde van 
     # y en m
 
-    #YOUR CODE HERE
+    #in y^i is een 0 gerepresenteerd als een 10, dat wordt eerst aangepast
+    y[y == 10] = 0
+
+    #van vector 1 wordt één array gemaakt, met de bijbehorende waardes
+    cols = np.array(np.ndarray.flatten(y))
+
+    rows = [i for i in range(len(cols))]
+    data = [1 for _ in range(len(cols))]
+    #max is 9, ipv 10 door regel 51
+    width = max(cols)+1
+
+    #het maken van de matrix, op basis van gegeven code
+    y_vec = csr_matrix((data, (rows, cols)), shape=(len(rows), width)).toarray()
+    print(y_vec)
+    return y_vec
     pass
 
 # ==== OPGAVE 2c ==== 
