@@ -64,7 +64,6 @@ def compute_cost(X, y, theta):
 
     # aantal rijen in y, gelijk aan totaal aantal observaties, X.shape[0] had ook gewerkt.
     m = y.shape[0]
-
     # hoxi is de verwachte waarde (hθ(x(i))
     hoxi = np.dot(X, theta)
     #delta 2 is delta in het kwadraat,delta het verschil tussen hoxi en actuele waarde van observatie (y)
