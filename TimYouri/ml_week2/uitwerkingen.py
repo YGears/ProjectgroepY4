@@ -11,9 +11,6 @@ def plot_number(nrVector):
     # gespiegeld en geroteerd. Zie de documentatie op 
     # https://docs.scipy.org/doc/numpy/reference/generated/numpy.reshape.html
 
-    #tijdelijk om deze over te slaan
-    return
-
     #vormen van een 2d array met de juiste ordening. Fortran, first index changing fastest last index changing slowest
     vectorArray = np.reshape(nrVector, (20, 20), 'F')
     #matshow aanmaken met juiste color scheme
@@ -55,12 +52,12 @@ def get_y_matrix(y, m):
 
     rows = [i for i in range(len(cols))]
     data = [1 for _ in range(len(cols))]
+
     #max is 9, ipv 10 door regel 51
     width = max(cols)+1
 
     #het maken van de matrix, op basis van gegeven code
     y_vec = csr_matrix((data, (rows, cols)), shape=(len(rows), width)).toarray()
-    print(y_vec)
     return y_vec
     pass
 
@@ -89,6 +86,35 @@ def predict_number(Theta1, Theta2, X):
     # Voeg enen toe aan het begin van elke stap en reshape de uiteindelijke
     # vector zodat deze dezelfde dimensionaliteit heeft als y in de exercise.
 
+
+    #1. Voeg de enen toe
+    a1 = np.insert(X, 0, 1, 1)
+    Theta1 = Theta1.transpose()
+    a1 = np.dot(a1, Theta1)
+    #2. roep sigmoid aan a1
+    a2 = sigmoid(a1)
+
+    #3. voeg enen toe aan a2
+    a2 = np.insert(a2, 0, 1, 1)
+    Theta2 = Theta2.transpose()
+    a2 = np.dot(a2, Theta2)
+    #4. roep sigmoid aan voor a2
+    output = sigmoid(a2)
+
+
+    print("Theta 1")
+    print(Theta1.shape)
+    print("Theta 2")
+    print(Theta2.shape)
+    print("a1")
+    print(a1.shape)
+    print("a2")
+    print(a2.shape)
+    print("output")
+    print(output.shape)
+
+    return output
+
     pass
 
 
@@ -102,7 +128,11 @@ def compute_cost(Theta1, Theta2, X, y):
     # geretourneerd.
     # Let op: de y die hier binnenkomt is de m×1-vector met waarden van 1...10. 
     # Maak gebruik van de methode get_y_matrix() die je in opgave 2a hebt gemaakt
-    # om deze om te zetten naar een matrix. 
+    # om deze om te zetten naar een matrix.
+
+    y_matrix = get_y_matrix(y, len(y))
+
+    return 7
 
     pass
 
