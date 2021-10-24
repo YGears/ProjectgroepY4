@@ -99,8 +99,8 @@ def sigmoid_gradient(z):
     # Retourneer hier de waarde van de afgeleide van de sigmoïdefunctie.
     # Zie de opgave voor de exacte formule. Zorg ervoor dat deze werkt met
     # scalaire waarden en met vectoren.
-
-    pass
+    f = 1 / (1 + np.exp(-z))
+    return f * (1 - f)
 
 # ==== OPGAVE 3b ====
 def nn_check_gradients(Theta1, Theta2, X, y): 
@@ -109,7 +109,7 @@ def nn_check_gradients(Theta1, Theta2, X, y):
 
     Delta2 = np.zeros(Theta1.shape)
     Delta3 = np.zeros(Theta2.shape)
-    m = 1 #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
+    m = Delta2.shape[0] #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
 
     for i in range(m): 
         #YOUR CODE HERE
