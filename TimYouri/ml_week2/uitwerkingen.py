@@ -102,16 +102,16 @@ def predict_number(Theta1, Theta2, X):
     output = sigmoid(a2)
 
 
-    print("Theta 1")
-    print(Theta1.shape)
-    print("Theta 2")
-    print(Theta2.shape)
-    print("a1")
-    print(a1.shape)
-    print("a2")
-    print(a2.shape)
-    print("output")
-    print(output.shape)
+    # print("Theta 1")
+    # print(Theta1.shape)
+    # print("Theta 2")
+    # print(Theta2.shape)
+    # print("a1")
+    # print(a1.shape)
+    # print("a2")
+    # print(a2.shape)
+    # print("output")
+    # print(output.shape)
 
     return output
 
@@ -131,6 +131,10 @@ def compute_cost(Theta1, Theta2, X, y):
     # om deze om te zetten naar een matrix.
 
     y_matrix = get_y_matrix(y, len(y))
+    prediction = predict_number(Theta1, Theta2, X)
+
+    print(np.sum(np.subtract(prediction, y_matrix))/5000)
+
 
     return 7
 
