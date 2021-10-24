@@ -25,7 +25,7 @@ This representation has two useful properties:
 import random
 import copy
 
-max_depth = 5
+max_depth = 3
 
 value = 0
 
@@ -188,30 +188,38 @@ def play(black_strategy, white_strategy):
     b = initial_board()
     current = BLACK
     print_board(b)
-    print(minimax(b, max_depth, BLACK))
+    # move = dfs_pruning(b, max_depth, float('-inf'), float('inf'), BLACK, BLACK)
+    # b = make_move(move, BLACK, b)
+    # print_board(b)
 
-    # while any_legal_move(current, b):
-    #     if current is BLACK:
-    #         b = make_move(black_strategy(current, b), current, b)
-    #     if current is WHITE:
-    #         b = make_move(white_strategy(current, b), current, b)
-    #     print_board(b)
-    #     # print("Score for player " + str(PLAYERS.get(current)) + " :" + str(minimax(b, max_depth, current)))
-    #     current = next_player(b, current)
+    while any_legal_move(current, b):
+        if current is BLACK:
+            b = make_move(black_strategy(b, max_depth, float('-inf'), float('inf'), current, current), current, copy.deepcopy(b))
+            # b = make_move(black_strategy(current, copy.deepcopy(b)), current, copy.deepcopy(b)) #random
+        if current is WHITE:
+            b = make_move(white_strategy(b, max_depth, float('-inf'), float('inf'), current, current), current, copy.deepcopy(b)) # pruning
+            # b = make_move(white_strategy(current, copy.deepcopy(b)), current, copy.deepcopy(b)) #random
+        print_board(b)
+        if not any_legal_move(current, b):
+            print(current, " doesn't have any moves left!")
+            break
+        # print("Score for player " + str(PLAYERS.get(current)) + " :" + str(minimax(b, max_depth, current)))
+        current = next_player(b, current)
 
 
     print("game has ended!")
     s = score(b)
     print("score:")
-    print("Black: "+str(s[0]))
+    print("Black: " + str(s[0]))
     print("White: " + str(s[1]))
 
-    if s[0]>s[1]:
+    if s[0] > s[1]:
         print("Black has won!")
-    elif s[0]<s[1]:
+    elif s[0] < s[1]:
         print("White has won!")
     elif s[0] is s[1]:
         print("it's a tie")
+
 
 def next_player(board, prev_player):
     # which player should move next?  Returns None if no legal moves exist
@@ -228,6 +236,8 @@ def next_player(board, prev_player):
                 return WHITE
             else:
                 return None
+
+
 #
 # def get_move(strategy, player, board):
 #     # call strategy(player, board) to get a move'
@@ -241,22 +251,53 @@ def score(board):
     return black, white
 
 
-def minimax(node, depth, player):
-    global value
-    if max_depth == depth:
-        value = getHeuristic(node, player)
-    if depth == 0 or next_player(node, player) is None:
-        return getHeuristic(node, player)
-    if player == BLACK:
-        for child in getChildren(node, player):
-            value = max(value, minimax(child, depth - 1, WHITE))
-        return value
+# def minimax(node, depth, player):
+#     global value
+#     if max_depth == depth:
+#         value = getHeuristic(node, player)
+#     if depth == 0 or next_player(node, player) is None:
+#         return getHeuristic(node, player)
+#     if player == BLACK:
+#         for child in getChildren(node, player):
+#             value = max(value, minimax(child, depth - 1, WHITE))
+#         return value
+#     else:
+#         for child in getChildren(node, player):
+#             value = min(value, minimax(child, depth - 1, BLACK))
+
+
+def dfs_pruning(board, depth, alpha, beta, max_player, player):
+    if depth == 0 or max_player is None:
+        return get_heuristic(copy.deepcopy(board), player)
+    if max_player == player:
+        max_eval = float('-inf')
+        for i in legal_moves(max_player, board):
+            eval = dfs_pruning(make_move(i, max_player, copy.deepcopy(board)), depth - 1, alpha, beta,
+                               next_player(copy.deepcopy(board), max_player), player)
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+            print("depth: ", depth, "alpha: ", alpha, "beta: ", beta, "eval: ", eval, "max_eval: ", max_eval)
+            if depth == max_depth:
+                return i
+        return max_eval
     else:
-        for child in getChildren(node, player):
-            value = min(value, minimax(child, depth - 1, BLACK))
+        min_eval = float('inf')
+        for i in legal_moves(max_player, board):
+            eval = dfs_pruning(make_move(i, max_player, copy.deepcopy(board)), depth - 1, alpha, beta,
+                               next_player(copy.deepcopy(board), max_player), player)
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
+            print("depth: ", depth, "alpha: ", alpha, "beta: ", beta, "eval: ", eval, "max_eval: ", min_eval)
+            if depth == max_depth:
+                return i
+        return min_eval
 
 
-def getHeuristic(node, player):
+def get_heuristic(node, player):
     scoreBlack = 0
     scoreWhite = 0
 
@@ -287,12 +328,12 @@ def getChildren(node, player):
         children.append(tb)
 
     for child in children:
-        i = i+1
+        i = i + 1
         print('kind' + str(i))
         print(print_board(child))
-        print(getHeuristic(child, player))
+        print(get_heuristic(child, player))
     return children
 
 
 # Play strategies
-play(random_legal_move, random_legal_move)
+play(dfs_pruning, dfs_pruning)
