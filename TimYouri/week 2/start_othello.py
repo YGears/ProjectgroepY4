@@ -25,7 +25,7 @@ This representation has two useful properties:
 import random
 import copy
 
-max_depth = 3
+max_depth = 6
 
 value = 0
 
@@ -267,8 +267,9 @@ def score(board):
 
 
 def dfs_pruning(board, depth, alpha, beta, max_player, player):
-    if depth == 0 or max_player is None:
+    if depth == 0 or max_player is None or not any_legal_move(max_player, copy.deepcopy(board)):
         return get_heuristic(copy.deepcopy(board), player)
+
     if max_player == player:
         max_eval = float('-inf')
         for i in legal_moves(max_player, board):
@@ -282,6 +283,7 @@ def dfs_pruning(board, depth, alpha, beta, max_player, player):
             if depth == max_depth:
                 return i
         return max_eval
+
     else:
         min_eval = float('inf')
         for i in legal_moves(max_player, board):
