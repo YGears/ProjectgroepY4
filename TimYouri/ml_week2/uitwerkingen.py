@@ -147,8 +147,9 @@ def sigmoid_gradient(z):
     # Retourneer hier de waarde van de afgeleide van de sigmoïdefunctie.
     # Zie de opgave voor de exacte formule. Zorg ervoor dat deze werkt met
     # scalaire waarden en met vectoren.
-    f = 1 / (1 + np.exp(-z))
+    f = sigmoid(z)
     return f * (1 - f)
+    pass
 
 # ==== OPGAVE 3b ====
 def nn_check_gradients(Theta1, Theta2, X, y): 
@@ -157,13 +158,43 @@ def nn_check_gradients(Theta1, Theta2, X, y):
 
     Delta2 = np.zeros(Theta1.shape)
     Delta3 = np.zeros(Theta2.shape)
-    m = Delta2.shape[0] #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
+    m = 10 #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
 
-    for i in range(m): 
-        #YOUR CODE HERE
-        pass
+    # Setup
+
+    # Gegeven een input a(i), doe een standaard forward-propagation door gebruik te maken van de
+    # code uit predict_number; je moet de code hier wel herhalen, omdat je de verschillende waarden
+    # nodig hebt tijdens de backpropagation.
+
+    # code uit predict_number:
+
+    a1 = np.insert(X, 0, 1, 1)
+
+    Theta1 = Theta1.transpose()
+    z2 = np.dot(a1, Theta1)
+    a2 = sigmoid(z2)
+    a2 = np.insert(a2, 0, 1, 1)
+
+    Theta2 = Theta2.transpose()
+    z3 = np.dot(a2, Theta2)
+    a3 = sigmoid(z3)
+
+    for i in range(m):
+        # 1. bereken: δ(3) = a(3) − y
+        d3 = np.subtract(a3, y)
+
+        # 2. bereken: δ(2) = Θ(2) · δ(3) × (g0(z(2)) (element wise)
+        d2 = np.dot((np.dot(Theta2, d3), sigmoid_gradient(z2)))
+
+        # 3. update: Θ(2) := Θ(2) + a(2) · δ(3)
+        Delta3 = Delta3 + np.dot(a2, d3)
+
+        # 4. update: Θ(1) := Θ(1) + a(1) · δ(2)
+        Delta2 = Delta2 + np.dot(a1, d2)
+
 
     Delta2_grad = Delta2 / m
     Delta3_grad = Delta3 / m
     
     return Delta2_grad, Delta3_grad
+    pass
