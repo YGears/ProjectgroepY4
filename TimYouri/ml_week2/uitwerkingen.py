@@ -158,7 +158,7 @@ def nn_check_gradients(Theta1, Theta2, X, y):
 
     Delta2 = np.zeros(Theta1.shape)
     Delta3 = np.zeros(Theta2.shape)
-    m = 10 #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
+    m = 1 #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
 
     # Setup
 
@@ -166,20 +166,27 @@ def nn_check_gradients(Theta1, Theta2, X, y):
     # code uit predict_number; je moet de code hier wel herhalen, omdat je de verschillende waarden
     # nodig hebt tijdens de backpropagation.
 
-    # code uit predict_number:
-
-    a1 = np.insert(X, 0, 1, 1)
-
     Theta1 = Theta1.transpose()
-    z2 = np.dot(a1, Theta1)
-    a2 = sigmoid(z2)
-    a2 = np.insert(a2, 0, 1, 1)
-
     Theta2 = Theta2.transpose()
-    z3 = np.dot(a2, Theta2)
-    a3 = sigmoid(z3)
+    X = np.insert(X, 0, 1, 1)
 
     for i in range(m):
+        a1 = X[i]
+        # a1 = np.c_[np.zeros(401), a1]
+        print(a1)
+        print(Theta1[i])
+
+        z2 = np.dot(a1, Theta1)
+        a2 = sigmoid(z2)
+        # np.concatenate((np.zeros((3, 3), dtype=int), a2), axis=1)
+        a2 = np.c_[np.zeros(25), a2]
+        # a2 = np.insert(a2, 0, 1)
+
+        print(a2)
+        print(Theta2)
+        z3 = np.dot(a2, Theta2)
+        a3 = sigmoid(z3)
+
         # 1. bereken: δ(3) = a(3) − y
         d3 = np.subtract(a3, y)
 
