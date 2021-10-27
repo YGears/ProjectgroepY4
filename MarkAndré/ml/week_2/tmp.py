@@ -40,8 +40,8 @@ def get_y_matrix(y, m):
     width = max(cols) + 1
     # compressed sparse row-matrix
     y_vec = csr_matrix((data, (rows, cols)), shape=(m, width)).toarray()
-    # print(y[4999])
-    # print(y_vec[4999])
+    print(y[4999])
+    print(y_vec[4999])
     return y_vec
 
 matr = get_y_matrix(y, m)

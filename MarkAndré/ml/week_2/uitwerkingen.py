@@ -53,6 +53,7 @@ def get_y_matrix(y, m):
     # print(y_vec[4999])
     return y_vec
 
+
 # ==== OPGAVE 2c ==== 
 # ===== deel 1: =====
 def predict_number(Theta1, Theta2, X):
@@ -92,8 +93,6 @@ def predict_number(Theta1, Theta2, X):
     return output
 
 
-
-
 # ===== deel 2: =====
 def compute_cost(Theta1, Theta2, X, y):
     # Deze methode maakt gebruik van de methode predictNumber() die je hierboven hebt
@@ -115,29 +114,45 @@ def compute_cost(Theta1, Theta2, X, y):
     return cost
 
 
-
 # ==== OPGAVE 3a ====
-def sigmoid_gradient(z): 
+def sigmoid_gradient(z):
     # Retourneer hier de waarde van de afgeleide van de sigmoïdefunctie.
     # Zie de opgave voor de exacte formule. Zorg ervoor dat deze werkt met
     # scalaire waarden en met vectoren.
+    outcome = sigmoid(z)
+    return outcome * (1 - outcome)
 
-    pass
 
 # ==== OPGAVE 3b ====
-def nn_check_gradients(Theta1, Theta2, X, y): 
+def nn_check_gradients(Theta1, Theta2, X, y):
     # Retourneer de gradiënten van Theta1 en Theta2, gegeven de waarden van X en van y
     # Zie het stappenplan in de opgaven voor een mogelijke uitwerking.
 
     Delta2 = np.zeros(Theta1.shape)
     Delta3 = np.zeros(Theta2.shape)
-    m = 1 #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
 
-    for i in range(m): 
-        #YOUR CODE HERE
-        pass
+    m = len(y)
+
+    # forward
+    a1 = np.c_[np.ones(m), X]
+    z2 = np.dot(a1, Theta1.T)
+    a2 = sigmoid(z2)
+
+    a2 = np.c_[np.ones(m), a2]
+    z3 = np.dot(a2, Theta2.T)
+    a3 = sigmoid(z3)
+
+    y_mat = get_y_matrix(y, m)
+
+    #backward
+    for i in range(m):
+        d3 = (a3[[i],:] - y_mat[[i],:]).T
+        d2 = np.multiply(np.dot(Theta2[:,1:].T, d3), sigmoid_gradient(z2[[i],:].T))
+
+        Delta3 = Delta3 + np.dot(d3, a2[[i],:])
+        Delta2 = Delta2 + np.dot(d2, a1[[i],:])
 
     Delta2_grad = Delta2 / m
     Delta3_grad = Delta3 / m
-    
+
     return Delta2_grad, Delta3_grad

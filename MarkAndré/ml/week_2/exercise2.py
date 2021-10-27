@@ -131,8 +131,8 @@ input ("Druk op Return om verder te gaan...")
 print ("")
 print ("Aanroepen van de methode nn_check_gradients met initiële waarden van de Theta's.")
 g1, g2 =  nn_check_gradients(Theta1, Theta2, X, y)
-print (f"De totale som van de eerste gradiënt-matrix is {sum(g1)}")
-print (f"De totale som van de tweede gradiënt-matrix is {sum(g2)}")
+print (f"De totale som van de eerste gradiënt-matrix is {np.sum(g1)}")
+print (f"De totale som van de tweede gradiënt-matrix is {np.sum(g2)}")
 input ("Druk op Return om verder te gaan...")
 
 # ========================  OPGAVE 4 ======================== 
