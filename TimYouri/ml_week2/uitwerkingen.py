@@ -130,13 +130,24 @@ def compute_cost(Theta1, Theta2, X, y):
     # Maak gebruik van de methode get_y_matrix() die je in opgave 2a hebt gemaakt
     # om deze om te zetten naar een matrix.
 
-    y_matrix = get_y_matrix(y, len(y))
+    y_matix = get_y_matrix(y, len(y))
     prediction = predict_number(Theta1, Theta2, X)
+    prediction = prediction.transpose()
 
-    print(np.sum(np.subtract(prediction, y_matrix))/5000)
+    ones = np.ones((5000, 10))
 
+    # print(ones)
+    # print(ones.shape)
+    # print(y_matix)
+    # print(y_matix.shape)
+    # print(prediction)
+    # print(prediction.shape)
 
-    return 7
+    cost0 = np.sum(np.dot(y_matix, np.log(prediction)) + np.dot(np.subtract(ones, y_matix), np.log(np.subtract(ones.transpose(), prediction))))
+    print(cost0)
+    cost = (cost0/5000)/-5000
+
+    return cost
 
     pass
 
@@ -167,3 +178,30 @@ def nn_check_gradients(Theta1, Theta2, X, y):
     Delta3_grad = Delta3 / m
     
     return Delta2_grad, Delta3_grad
+
+
+    # Theta1 = Theta1.transpose()
+    #
+    # Theta2 = Theta2.transpose()
+    #
+    # #1. Voeg de enen toe
+    # a1 = np.insert(X, 0, 1, 1)
+    # a1 = np.dot(a1, Theta1)
+    # #2. roep sigmoid aan a1
+    # a2 = sigmoid(a1)
+    #
+    # #3. voeg enen toe aan a2
+    # a2 = np.insert(a2, 0, 1, 1)
+    #
+    # y_matrix = get_y_matrix(y, len(y))
+    # prediction = predict_number(Theta1, Theta2, X)
+    #
+    # delta3 = np.subtract(prediction, y_matrix)
+    #
+    # delta2 = np.dot(Theta2, sigmoid(delta3) )
+    #
+    #
+    # Theta2 = np.sum(Theta2, (np.dot(a2, delta3)))
+    # Theta1 = np.sum(Theta1, (np.dot(a1, delta2)))
+    #
+    # return (np.sum(np.subtract(prediction, y_matrix))/5000)
