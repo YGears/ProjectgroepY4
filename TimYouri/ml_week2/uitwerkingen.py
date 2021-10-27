@@ -6,9 +6,9 @@ from scipy.sparse import csr_matrix
 # ==== OPGAVE 1 ====
 def plot_number(nrVector):
     # Let op: de manier waarop de data is opgesteld vereist dat je gebruik maakt
-    # van de Fortran index-volgorde – de eerste index verandert het snelst, de 
-    # laatste index het langzaamst; als je dat niet doet, wordt het plaatje 
-    # gespiegeld en geroteerd. Zie de documentatie op 
+    # van de Fortran index-volgorde – de eerste index verandert het snelst, de
+    # laatste index het langzaamst; als je dat niet doet, wordt het plaatje
+    # gespiegeld en geroteerd. Zie de documentatie op
     # https://docs.scipy.org/doc/numpy/reference/generated/numpy.reshape.html
 
     #vormen van een 2d array met de juiste ordening. Fortran, first index changing fastest last index changing slowest
@@ -41,7 +41,7 @@ def get_y_matrix(y, m):
     # Let op: de gegeven vector y is 1-based en de gevraagde matrix is 0-based,
     # dus als y_i=1, dan moet regel i in de matrix [1,0,0, ... 0] zijn, als
     # y_i=10, dan is regel i in de matrix [0,0,...1] (in dit geval is de breedte
-    # van de matrix 10 (0-9), maar de methode moet werken voor elke waarde van 
+    # van de matrix 10 (0-9), maar de methode moet werken voor elke waarde van
     # y en m
 
     #in y^i is een 0 gerepresenteerd als een 10, dat wordt eerst aangepast
@@ -61,17 +61,17 @@ def get_y_matrix(y, m):
     return y_vec
     pass
 
-# ==== OPGAVE 2c ==== 
+# ==== OPGAVE 2c ====
 # ===== deel 1: =====
 def predict_number(Theta1, Theta2, X):
     # Deze methode moet een matrix teruggeven met de output van het netwerk
-    # gegeven de waarden van Theta1 en Theta2. Elke regel in deze matrix 
+    # gegeven de waarden van Theta1 en Theta2. Elke regel in deze matrix
     # is de waarschijnlijkheid dat het sample op die positie (i) het getal
     # is dat met de kolom correspondeert.
 
     # De matrices Theta1 en Theta2 corresponderen met het gewicht tussen de
     # input-laag en de verborgen laag, en tussen de verborgen laag en de
-    # output-laag, respectievelijk. 
+    # output-laag, respectievelijk.
 
     # Een mogelijk stappenplan kan zijn:
 
@@ -122,45 +122,53 @@ def predict_number(Theta1, Theta2, X):
 # ===== deel 2: =====
 def compute_cost(Theta1, Theta2, X, y):
     # Deze methode maakt gebruik van de methode predictNumber() die je hierboven hebt
-    # geïmplementeerd. Hier wordt het voorspelde getal vergeleken met de werkelijk 
+    # geïmplementeerd. Hier wordt het voorspelde getal vergeleken met de werkelijk
     # waarde (die in de parameter y is meegegeven) en wordt de totale kost van deze
     # voorspelling (dus met de huidige waarden van Theta1 en Theta2) berekend en
     # geretourneerd.
-    # Let op: de y die hier binnenkomt is de m×1-vector met waarden van 1...10. 
+    # Let op: de y die hier binnenkomt is de m×1-vector met waarden van 1...10.
     # Maak gebruik van de methode get_y_matrix() die je in opgave 2a hebt gemaakt
     # om deze om te zetten naar een matrix.
 
-    y_matrix = get_y_matrix(y, len(y))
+
+    y_matix = get_y_matrix(y, len(y))
     prediction = predict_number(Theta1, Theta2, X)
+    prediction = prediction.transpose()
 
-    print(np.sum(np.subtract(prediction, y_matrix))/5000)
+    ones = np.ones((5000, 10))
 
+    # print(ones)
+    # print(ones.shape)
+    # print(y_matix)
+    # print(y_matix.shape)
+    # print(prediction)
+    # print(prediction.shape)
 
-    return 7
+    cost0 = np.sum(np.dot(y_matix, np.log(prediction)) + np.dot(np.subtract(ones, y_matix), np.log(np.subtract(ones.transpose(), prediction))))
+    print(cost0)
+    cost = (cost0/5000)/-5000
+
+    return cost
 
     pass
 
-
-
 # ==== OPGAVE 3a ====
-def sigmoid_gradient(z): 
+def sigmoid_gradient(z):
     # Retourneer hier de waarde van de afgeleide van de sigmoïdefunctie.
     # Zie de opgave voor de exacte formule. Zorg ervoor dat deze werkt met
     # scalaire waarden en met vectoren.
-    f = sigmoid(z)
+    f = 1 / (1 + np.exp(-z))
     return f * (1 - f)
-    pass
 
 # ==== OPGAVE 3b ====
-def nn_check_gradients(Theta1, Theta2, X, y): 
+def nn_check_gradients(Theta1, Theta2, X, y):
     # Retourneer de gradiënten van Theta1 en Theta2, gegeven de waarden van X en van y
     # Zie het stappenplan in de opgaven voor een mogelijke uitwerking.
 
-    # print(np.shape(Theta1))
-
     Delta2 = np.zeros(Theta1.shape)
     Delta3 = np.zeros(Theta2.shape)
-    m = 1 #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
+
+    m = 1
 
     a1 = np.insert(X, 0, 1, 1)
     Theta1 = Theta1.transpose()
@@ -191,9 +199,7 @@ def nn_check_gradients(Theta1, Theta2, X, y):
         # 4. update: Θ(1) := Θ(1) + a(1) · δ(2)
         Delta2 = Delta2 + np.dot(a1[i], d2)
 
-
     Delta2_grad = Delta2 / m
     Delta3_grad = Delta3 / m
-    
+
     return Delta2_grad, Delta3_grad
-    pass
