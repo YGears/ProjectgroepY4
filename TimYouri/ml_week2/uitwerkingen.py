@@ -156,6 +156,8 @@ def nn_check_gradients(Theta1, Theta2, X, y):
     # Retourneer de gradiënten van Theta1 en Theta2, gegeven de waarden van X en van y
     # Zie het stappenplan in de opgaven voor een mogelijke uitwerking.
 
+    # print(np.shape(Theta1))
+
     Delta2 = np.zeros(Theta1.shape)
     Delta3 = np.zeros(Theta2.shape)
     m = 1 #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
@@ -163,23 +165,25 @@ def nn_check_gradients(Theta1, Theta2, X, y):
     a1 = np.insert(X, 0, 1, 1)
     Theta1 = Theta1.transpose()
     z2 = np.dot(a1, Theta1)
-    #2. roep sigmoid aan a1
     a2 = sigmoid(z2)
 
-    #3. voeg enen toe aan a2
     a2 = np.insert(a2, 0, 1, 1)
     Theta2 = Theta2.transpose()
     z3 = np.dot(a2, Theta2)
-    #4. roep sigmoid aan voor a2
     a3 = sigmoid(z3)
-    # a3 = np.insert(a3, 0, 1, 1)
 
     # 1. bereken: δ(3) = a(3) − y
     d3 = np.subtract(a3, y)
 
     for i in range(m):
         # 2. bereken: δ(2) = Θ(2) · δ(3) × (g0(z(2)) (element wise)
-        d2 = np.dot(Theta2, d3[i]) * sigmoid_gradient(z2[i])
+
+        # print(np.shape(Theta2[i]))
+        # print(np.shape(d3[i]))
+
+        d2 = np.dot(np.dot(Theta2[i], d3[i]), sigmoid_gradient(z2[i]))
+
+        print(d2)
 
         # 3. update: Θ(2) := Θ(2) + a(2) · δ(3)
         Delta3 = Delta3 + np.dot(a2[i], d3[i])
