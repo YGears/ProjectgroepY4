@@ -36,8 +36,11 @@ def get_y_matrix(y, m):
     # y en m
 
     #YOUR CODE HERE
-    # (Alle getallen)-1, omdat een matrix niet zero based
-    cols = y.T[0] - 1
+    for i in range(m): #0-4999 is dit okey?
+        if y[i] == 10:
+            y[i] = 0
+    # Transpose
+    cols = y.T[0]
     # Lijst (size=m) met index nummers
     rows = [i for i in range(m)]
     # Lijst met alleen 1'en
@@ -46,6 +49,8 @@ def get_y_matrix(y, m):
     width = max(cols) + 1
     # compressed sparse row-matrix
     y_vec = csr_matrix((data, (rows, cols)), shape=(m, width)).toarray()
+    # print(y[4999])
+    # print(y_vec[4999])
     return y_vec
 
 # ==== OPGAVE 2c ==== 
@@ -73,7 +78,19 @@ def predict_number(Theta1, Theta2, X):
     # Voeg enen toe aan het begin van elke stap en reshape de uiteindelijke
     # vector zodat deze dezelfde dimensionaliteit heeft als y in de exercise.
 
-    pass
+    #Maak 1 en aan
+    ones = np.ones((len(X), 1))
+    # Voeg/concatoneer ones (de enenen) met matrix X
+    a1 = np.c_[ones, X]
+    # roep de sigmoid-functie van hierboven aan met a1 als actuele
+    # parameter: dit is de variabele a2
+    a2 = sigmoid(np.dot(a1, Theta1.T))
+    # Voeg/concatoneer ones (de enenen) met matrix X
+    a2 = np.c_[ones, a2]
+    # roep de sigmoid-functie aan op deze a2; dit is het uiteindelijke resultaat
+    output = sigmoid(np.dot(a2, Theta2.T))
+    return output
+
 
 
 
@@ -88,7 +105,14 @@ def compute_cost(Theta1, Theta2, X, y):
     # Maak gebruik van de methode get_y_matrix() die je in opgave 2a hebt gemaakt
     # om deze om te zetten naar een matrix. 
 
-    pass
+    m = len(y)
+    y = get_y_matrix(y, m)
+    predictions = predict_number(Theta1, Theta2, X)
+
+    total_matrix = np.multiply(y, np.log(predictions)) + np.multiply((1-y), np.log(1-predictions))
+    cost = -1 * (np.sum(total_matrix)/m)
+
+    return cost
 
 
 
