@@ -168,36 +168,36 @@ def nn_check_gradients(Theta1, Theta2, X, y):
     Delta2 = np.zeros(Theta1.shape)
     Delta3 = np.zeros(Theta2.shape)
 
-    m = 1
+    m = len(y)
 
     a1 = np.insert(X, 0, 1, 1)
     Theta1 = Theta1.transpose()
-    z2 = np.dot(a1, Theta1)
+    z2 = np.dot(a1, Theta1.T)
     a2 = sigmoid(z2)
 
     a2 = np.insert(a2, 0, 1, 1)
     Theta2 = Theta2.transpose()
-    z3 = np.dot(a2, Theta2)
+    z3 = np.dot(a2, Theta2.T)
     a3 = sigmoid(z3)
 
-    # 1. bereken: δ(3) = a(3) − y
-    d3 = np.subtract(a3, y)
+    temp_y = get_y_matrix(y, m)
 
     for i in range(m):
+
+        # 1. bereken: δ(3) = a(3) − y
+        d3 = np.subtract(a3[[i],:], temp_y[[i],:]).T
         # 2. bereken: δ(2) = Θ(2) · δ(3) × (g0(z(2)) (element wise)
 
         # print(np.shape(Theta2[i]))
         # print(np.shape(d3[i]))
 
-        d2 = np.dot(np.dot(Theta2[i], d3[i]), sigmoid_gradient(z2[i]))
-
-        print(d2)
+        d2 = np.dot(np.dot(Theta2[:,1:].T, d3), sigmoid_gradient(z2[[i],:]))
 
         # 3. update: Θ(2) := Θ(2) + a(2) · δ(3)
-        Delta3 = Delta3 + np.dot(a2[i], d3[i])
+        Delta3 = Delta3 + np.dot(a2[[i],:], d3)
 
         # 4. update: Θ(1) := Θ(1) + a(1) · δ(2)
-        Delta2 = Delta2 + np.dot(a1[i], d2)
+        Delta2 = Delta2 + np.dot(a1[[i],:], d2)
 
     Delta2_grad = Delta2 / m
     Delta3_grad = Delta3 / m
