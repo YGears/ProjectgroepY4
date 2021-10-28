@@ -145,7 +145,6 @@ def compute_cost(Theta1, Theta2, X, y):
     # print(prediction.shape)
 
     cost0 = np.sum(np.dot(y_matix, np.log(prediction)) + np.dot(np.subtract(ones, y_matix), np.log(np.subtract(ones.transpose(), prediction))))
-    print(cost0)
     cost = (cost0/5000)/-5000
 
     return cost
@@ -171,12 +170,12 @@ def nn_check_gradients(Theta1, Theta2, X, y):
     m = len(y)
 
     a1 = np.insert(X, 0, 1, 1)
-    Theta1 = Theta1.transpose()
+    # Theta1 = Theta1.transpose()
     z2 = np.dot(a1, Theta1.T)
     a2 = sigmoid(z2)
 
     a2 = np.insert(a2, 0, 1, 1)
-    Theta2 = Theta2.transpose()
+    # Theta2 = Theta2.transpose()
     z3 = np.dot(a2, Theta2.T)
     a3 = sigmoid(z3)
 
@@ -185,19 +184,19 @@ def nn_check_gradients(Theta1, Theta2, X, y):
     for i in range(m):
 
         # 1. bereken: δ(3) = a(3) − y
-        d3 = np.subtract(a3[[i],:], temp_y[[i],:]).T
+        d3 = (a3[[i],:] - temp_y[[i],:]).T
         # 2. bereken: δ(2) = Θ(2) · δ(3) × (g0(z(2)) (element wise)
 
         # print(np.shape(Theta2[i]))
         # print(np.shape(d3[i]))
 
-        d2 = np.dot(np.dot(Theta2[:,1:].T, d3), sigmoid_gradient(z2[[i],:]))
+        d2 = np.multiply(np.dot(Theta2[:,1:].T, d3), sigmoid_gradient(z2[[i],:].T))
 
         # 3. update: Θ(2) := Θ(2) + a(2) · δ(3)
-        Delta3 = Delta3 + np.dot(a2[[i],:], d3)
+        Delta3 = Delta3 + np.dot(d3, a2[[i],:])
 
         # 4. update: Θ(1) := Θ(1) + a(1) · δ(2)
-        Delta2 = Delta2 + np.dot(a1[[i],:], d2)
+        Delta2 = Delta2 + np.dot(d2, a1[[i],:])
 
     Delta2_grad = Delta2 / m
     Delta3_grad = Delta3 / m
