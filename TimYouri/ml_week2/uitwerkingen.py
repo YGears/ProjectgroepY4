@@ -101,18 +101,6 @@ def predict_number(Theta1, Theta2, X):
     #4. roep sigmoid aan voor a2
     output = sigmoid(a2)
 
-
-    # print("Theta 1")
-    # print(Theta1.shape)
-    # print("Theta 2")
-    # print(Theta2.shape)
-    # print("a1")
-    # print(a1.shape)
-    # print("a2")
-    # print(a2.shape)
-    # print("output")
-    # print(output.shape)
-
     return output
 
     pass
@@ -136,13 +124,6 @@ def compute_cost(Theta1, Theta2, X, y):
     prediction = prediction.transpose()
 
     ones = np.ones((5000, 10))
-
-    # print(ones)
-    # print(ones.shape)
-    # print(y_matix)
-    # print(y_matix.shape)
-    # print(prediction)
-    # print(prediction.shape)
 
     cost0 = np.sum(np.dot(y_matix, np.log(prediction)) + np.dot(np.subtract(ones, y_matix), np.log(np.subtract(ones.transpose(), prediction))))
     cost = (cost0/5000)/-5000
@@ -186,9 +167,6 @@ def nn_check_gradients(Theta1, Theta2, X, y):
         # 1. bereken: δ(3) = a(3) − y
         d3 = (a3[[i],:] - temp_y[[i],:]).T
         # 2. bereken: δ(2) = Θ(2) · δ(3) × (g0(z(2)) (element wise)
-
-        # print(np.shape(Theta2[i]))
-        # print(np.shape(d3[i]))
 
         d2 = np.multiply(np.dot(Theta2[:,1:].T, d3), sigmoid_gradient(z2[[i],:].T))
 
