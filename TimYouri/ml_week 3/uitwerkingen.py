@@ -2,6 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.metrics import sparse_categorical_crossentropy
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.metrics import Accuracy
+
 
 
 # OPGAVE 1a
@@ -42,9 +47,16 @@ def build_model():
 
     # Het staat je natuurlijk vrij om met andere settings en architecturen te experimenteren.
 
-    model = None
+    model = keras.Sequential()
+    model.add(tf.keras.layers.Dense(1, input_shape=(28,28)))
+    model.add(layers.Dense(128, activation="relu"))
+    model.add(layers.Dense(10, activation="softmax"))
 
-    # YOUR CODE HERE
+    model.compile(optimizer=Adam(),
+                  loss=tf.keras.losses.BinaryCrossentropy(),
+                  metrics=Accuracy())
+
+    model.summary()
 
     return model
 
