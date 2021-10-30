@@ -64,7 +64,7 @@ def get_y_matrix(y, m):
 # ==== OPGAVE 2c ====
 # ===== deel 1: =====
 def predict_number(Theta1, Theta2, X):
-    # Deze methode moet een matrix teruggeven met de output van het netwerk
+    # Deze methode moet een mat rix teruggeven met de output van het netwerk
     # gegeven de waarden van Theta1 en Theta2. Elke regel in deze matrix
     # is de waarschijnlijkheid dat het sample op die positie (i) het getal
     # is dat met de kolom correspondeert.
@@ -175,6 +175,8 @@ def nn_check_gradients(Theta1, Theta2, X, y):
 
         # 4. update: Θ(1) := Θ(1) + a(1) · δ(2)
         Delta2 = Delta2 + np.dot(d2, a1[[i],:])
+        print(Delta2.shape)
+        print(Delta3.shape)
 
     Delta2_grad = Delta2 / m
     Delta3_grad = Delta3 / m

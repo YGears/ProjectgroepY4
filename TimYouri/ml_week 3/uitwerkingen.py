@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
+
 # OPGAVE 1a
 def plot_image(img, label):
     # Deze methode krijgt een matrix mee (in img) en een label dat correspondeert met het 
@@ -25,9 +26,9 @@ def scale_data(X):
 
     # YOUR CODE HERE
     max = np.amax(X)
-    for i in range(len(X)):
-        print(i," -> ",X[i] / max)
-    pass
+
+    maxArray = np.full(X.shape, max)
+    return np.divide(X, maxArray)
 
 # OPGAVE 1c
 def build_model():
