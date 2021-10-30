@@ -8,7 +8,6 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Accuracy
 
 
-
 # OPGAVE 1a
 def plot_image(img, label):
     # Deze methode krijgt een matrix mee (in img) en een label dat correspondeert met het 
@@ -35,6 +34,7 @@ def scale_data(X):
     maxArray = np.full(X.shape, max)
     return np.divide(X, maxArray)
 
+
 # OPGAVE 1c
 def build_model():
     # Deze methode maakt het keras-model dat we gebruiken voor de classificatie van de mnist
@@ -48,17 +48,15 @@ def build_model():
     # Het staat je natuurlijk vrij om met andere settings en architecturen te experimenteren.
 
     model = keras.Sequential()
-    model.add(Dense(128, activation='relu', input_shape=(28,28,1)))
+    model.add(Dense(128, activation='relu', input_shape=(28, 28, 1)))
     model.add(Flatten())
     # model.add(Dense(128, activation='relu'))
     model.add(Dense(10, activation='softmax'))
 
     model.compile(loss="sparse_categorical_crossentropy",
-              optimizer="adam",
-              metrics=['accuracy'])
-
-    model.summary()
-
+                  optimizer="adam",
+                  metrics=['accuracy'])
+    # model.summary()
     return model
 
 
@@ -67,13 +65,14 @@ def conf_matrix(labels, pred):
     # Retourneer de econfusion matrix op basis van de gegeven voorspelling (pred) en de actuele
     # waarden (labels). Check de documentatie van tf.math.confusion_matrix:
     # https://www.tensorflow.org/api_docs/python/tf/math/confusion_matrix
-    
+
     # YOUR CODE HERE
+    return tf.math.confusion_matrix(labels, pred)
     pass
-    
+
 
 # OPGAVE 2b
-def conf_els(conf, labels): 
+def conf_els(conf, labels):
     # Deze methode krijgt een confusion matrix mee (conf) en een set van labels. Als het goed is, is 
     # de dimensionaliteit van de matrix gelijk aan len(labels) × len(labels) (waarom?). Bereken de 
     # waarden van de TP, FP, FN en TN conform de berekening in de opgave. Maak vervolgens gebruik van
@@ -81,12 +80,13 @@ def conf_els(conf, labels):
     # als volgt is gedefinieerd:
 
     #     (categorie:string, tp:int, fp:int, fn:int, tn:int)
- 
+
     # Check de documentatie van numpy diagonal om de eerste waarde te bepalen.
     # https://numpy.org/doc/stable/reference/generated/numpy.diagonal.html
- 
+
     # YOUR CODE HERE
     pass
+
 
 # OPGAVE 2c
 def conf_data(metrics):
@@ -96,7 +96,7 @@ def conf_data(metrics):
     # vorm van een dictionary (de scaffold hiervan is gegeven).
 
     # VERVANG ONDERSTAANDE REGELS MET JE EIGEN CODE
-    
+
     tp = 1
     fp = 1
     fn = 1
@@ -105,5 +105,5 @@ def conf_data(metrics):
     # BEREKEN HIERONDER DE JUISTE METRIEKEN EN RETOURNEER DIE 
     # ALS EEN DICTIONARY
 
-    rv = {'tpr':0, 'ppv':0, 'tnr':0, 'fpr':0 }
+    rv = {'tpr': 0, 'ppv': 0, 'tnr': 0, 'fpr': 0}
     return rv
