@@ -30,9 +30,7 @@ def scale_data(X):
     # Deel alle elementen in de matrix 'element wise' door de grootste waarde in deze matrix.
 
     # YOUR CODE HERE
-    max = np.amax(X)
-
-    maxArray = np.full(X.shape, max)
+    maxArray = np.full(X.shape, np.amax(X))
     return np.divide(X, maxArray)
 
 # OPGAVE 1c
@@ -47,16 +45,25 @@ def build_model():
 
     # Het staat je natuurlijk vrij om met andere settings en architecturen te experimenteren.
 
-    model = keras.Sequential()
-    model.add(tf.keras.layers.Dense(1, input_shape=(28,28)))
-    model.add(layers.Dense(128, activation="relu"))
-    model.add(layers.Dense(10, activation="softmax"))
+    # model = keras.Sequential()
+    # model.add(tf.keras.layers.Dense(1, input_shape=(28,28)))
+    # model.add(layers.Dense(128, activation="relu"))
+    # model.add(layers.Dense(10, activation="softmax"))
 
-    model.compile(optimizer=Adam(),
-                  loss=tf.keras.losses.BinaryCrossentropy(),
-                  metrics=Accuracy())
+    # input_shape = (784,)
+
+    model = tf.keras.Sequential([
+        tf.keras.layers.Dense(128, activation='relu',  input_shape=(784,)),
+        tf.keras.layers.Dense(10, activation='softmax')
+    ])
+
+    model.compile(optimizer='adam',
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
 
     model.summary()
+
+    print("Model aangemaakt!")
 
     return model
 
