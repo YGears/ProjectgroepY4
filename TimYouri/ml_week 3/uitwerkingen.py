@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.metrics import sparse_categorical_crossentropy
+from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
+from tensorflow.keras.losses import sparse_categorical_crossentropy
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Accuracy
 
@@ -30,7 +30,9 @@ def scale_data(X):
     # Deel alle elementen in de matrix 'element wise' door de grootste waarde in deze matrix.
 
     # YOUR CODE HERE
-    maxArray = np.full(X.shape, np.amax(X))
+    max = np.amax(X)
+
+    maxArray = np.full(X.shape, max)
     return np.divide(X, maxArray)
 
 # OPGAVE 1c
@@ -45,25 +47,17 @@ def build_model():
 
     # Het staat je natuurlijk vrij om met andere settings en architecturen te experimenteren.
 
-    # model = keras.Sequential()
-    # model.add(tf.keras.layers.Dense(1, input_shape=(28,28)))
-    # model.add(layers.Dense(128, activation="relu"))
-    # model.add(layers.Dense(10, activation="softmax"))
+    model = keras.Sequential()
+    model.add(Dense(128, activation='relu', input_shape=(28,28,1)))
+    model.add(Flatten())
+    # model.add(Dense(128, activation='relu'))
+    model.add(Dense(10, activation='softmax'))
 
-    # input_shape = (784,)
-
-    model = tf.keras.Sequential([
-        tf.keras.layers.Dense(128, activation='relu',  input_shape=(784,)),
-        tf.keras.layers.Dense(10, activation='softmax')
-    ])
-
-    model.compile(optimizer='adam',
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
+    model.compile(loss="sparse_categorical_crossentropy",
+              optimizer="adam",
+              metrics=['accuracy'])
 
     model.summary()
-
-    print("Model aangemaakt!")
 
     return model
 
