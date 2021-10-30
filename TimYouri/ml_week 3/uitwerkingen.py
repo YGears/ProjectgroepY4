@@ -58,7 +58,7 @@ def build_model():
     ])
 
     model.compile(optimizer='adam',
-                  loss='binary_crossentropy',
+                  loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
     model.summary()
