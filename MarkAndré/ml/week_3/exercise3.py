@@ -5,7 +5,8 @@ from tensorflow import keras
 from random import randint
 import sys
 
-import pickle
+import os
+from os.path import exists
 
 
 """
@@ -80,15 +81,19 @@ test_images = scale_data(test_images)
 # ===============  OPGAVE 1c ======================
 print ("")
 print ("Aanmaken van het model.")
-model = build_model()
-print ("Trainen van het model...")
-model.fit(train_images, train_labels, epochs=1)
-print ("Training afgerond.")
 
-model.save("savedModel.txt")
-if 
-filehandler = open("savedModel.txt", 'w')
-pickle.dump(model, filehandler)
+print(os.path.exists("savedModel"))
+if os.path.exists("savedModel"):
+    model = keras.models.load_model('savedModel')
+else:
+    model = build_model()
+    print ("Trainen van het model...")
+    model.fit(train_images, train_labels, epochs=6)
+    print ("Training afgerond.")
+
+    model.save("savedModel")
+
+
 input ("Druk op enter om verder te gaan...")
 
 
