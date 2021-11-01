@@ -2,10 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
-from tensorflow.keras.losses import sparse_categorical_crossentropy
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.metrics import Accuracy
+from tensorflow.keras.layers import Dense, Flatten
+
 
 
 # OPGAVE 1a
@@ -30,9 +28,7 @@ def scale_data(X):
 
     # YOUR CODE HERE
     max = np.amax(X)
-
-    maxArray = np.full(X.shape, max)
-    return np.divide(X, maxArray)
+    return np.divide(X, max)
 
 
 # OPGAVE 1c
@@ -55,7 +51,7 @@ def build_model():
     model.compile(loss="sparse_categorical_crossentropy",
                   optimizer="adam",
                   metrics=['accuracy'])
-    # model.summary()
+    model.summary()
     return model
 
 # OPGAVE 2a
