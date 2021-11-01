@@ -85,6 +85,21 @@ def conf_els(conf, labels):
     # https://numpy.org/doc/stable/reference/generated/numpy.diagonal.html
 
     # YOUR CODE HERE
+
+    # print(np.diagonal(conf))
+    #
+    FP = conf.sum(axis=0) - np.diag(conf)
+    FN = conf.sum(axis=1) - np.diag(conf)
+    TP = np.diag(conf)
+    TN = np.sum(conf) - (FP + FN + TP)
+
+    print(FP)
+    print(FN)
+    print(TP)
+    print(TN)
+
+    # return list(categorie:string, tp:int, fp:int, fn:int, tn:int)
+
     pass
 
 
