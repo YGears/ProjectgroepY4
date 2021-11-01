@@ -50,7 +50,6 @@ def build_model():
     model = keras.Sequential()
     model.add(Dense(128, activation='relu', input_shape=(28, 28, 1)))
     model.add(Flatten())
-    # model.add(Dense(128, activation='relu'))
     model.add(Dense(10, activation='softmax'))
 
     model.compile(loss="sparse_categorical_crossentropy",
@@ -58,7 +57,6 @@ def build_model():
                   metrics=['accuracy'])
     # model.summary()
     return model
-
 
 # OPGAVE 2a
 def conf_matrix(labels, pred):
@@ -93,12 +91,7 @@ def conf_els(conf, labels):
     TP = np.diag(conf)
     TN = np.sum(conf) - (FP + FN + TP)
 
-    print(FP)
-    print(FN)
-    print(TP)
-    print(TN)
-
-    # return list(categorie:string, tp:int, fp:int, fn:int, tn:int)
+    return list(zip(labels, TP, FP, FN, TN))
 
     pass
 
