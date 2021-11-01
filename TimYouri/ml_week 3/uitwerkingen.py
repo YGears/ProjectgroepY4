@@ -101,18 +101,10 @@ def conf_data(metrics):
 
     # VERVANG ONDERSTAANDE REGELS MET JE EIGEN CODE
 
-    tp = 0
-    fp = 0
-    fn = 0
-    tn = 0
-
-    for index, label in enumerate(metrics):
-        tp += label[1]
-        fp += label[2]
-        fn += label[3]
-        tn += label[4]
-
-
+    tp = sum([label[1] for index, label in enumerate(metrics)])
+    fp = sum([label[2] for index, label in enumerate(metrics)])
+    fn = sum([label[3] for index, label in enumerate(metrics)])
+    tn = sum([label[4] for index, label in enumerate(metrics)])
 
     # BEREKEN HIERONDER DE JUISTE METRIEKEN EN RETOURNEER DIE
     # ALS EEN DICTIONARY
