@@ -53,6 +53,7 @@ print (f"Grootte van de labels: {len(labels)}")
 
 # ===============  OPGAVE 1 ======================
 # ===============  OPGAVE 1a ======================
+
 print ("Plotten van een willekeurig plaatje uit de trainings-dataset")
 if (len(sys.argv)>1 and sys.argv[1]=='skip') :
     print ("Slaan we over")

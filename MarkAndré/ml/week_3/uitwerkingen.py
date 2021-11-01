@@ -7,7 +7,7 @@ from tensorflow.keras.layers import Flatten, Dense
 
 # OPGAVE 1a
 def plot_image(img, label):
-    # Deze methode krijgt een matrix mee (in img) en een label dat correspondeert met het 
+    # Deze methode krijgt een matrix mee (in img) en een label dat correspondeert met het
     # plaatje dat in de matrix is weergegeven. Zorg ervoor dat dit grafisch wordt weergegeven.
     # Maak gebruik van plt.cm.binary voor de cmap-parameter van plt.imgshow.
 
@@ -20,8 +20,8 @@ def plot_image(img, label):
 
 # OPGAVE 1b
 def scale_data(X):
-    # Deze methode krijgt een matrix mee waarin getallen zijn opgeslagen van 0..m, en hij 
-    # moet dezelfde matrix retourneren met waarden van 0..1. Deze methode moet werken voor 
+    # Deze methode krijgt een matrix mee waarin getallen zijn opgeslagen van 0..m, en hij
+    # moet dezelfde matrix retourneren met waarden van 0..1. Deze methode moet werken voor
     # alle maximale waarde die in de matrix voorkomt.
     # Deel alle elementen in de matrix 'element wise' door de grootste waarde in deze matrix.
 
@@ -32,7 +32,7 @@ def scale_data(X):
 def build_model():
     # Deze methode maakt het tf.keras-model dat we gebruiken voor de classificatie van de mnist
     # dataset. Je hoeft deze niet abstract te maken, dus je kunt er van uitgaan dat de input
-    # layer van dit netwerk alleen geschikt is voor de plaatjes in de opgave (wat is de 
+    # layer van dit netwerk alleen geschikt is voor de plaatjes in de opgave (wat is de
     # dimensionaliteit hiervan?).
     # Maak een model met een input-laag, een volledig verbonden verborgen laag en een softmax
     # output-laag. Compileer het netwerk vervolgens met de gegevens die in opgave gegeven zijn
@@ -76,7 +76,12 @@ def conf_els(conf, labels):
     # https://numpy.org/doc/stable/reference/generated/numpy.diagonal.html
  
     # YOUR CODE HERE
-    pass
+    tp = np.diagonal(conf)
+    fp = conf.sum(axis=0) - tp
+    fn = conf.sum(axis=1) - tp
+    tn = conf.sum() - (fp + fn + tp)
+
+    return list(zip(labels, tp, fp, fn, tn))
 
 # OPGAVE 2c
 def conf_data(metrics):
@@ -86,14 +91,26 @@ def conf_data(metrics):
     # vorm van een dictionary (de scaffold hiervan is gegeven).
 
     # VERVANG ONDERSTAANDE REGELS MET JE EIGEN CODE
-    
-    tp = 1
-    fp = 1
-    fn = 1
-    tn = 1
+    # List van tuples bestaat nu uit een item en in het item staat label, tp, fp, fn, tn
+    # Dit zetten we om naar een list van Tuples deze tuples zijn nu een verzameling van elementen van alle items
+    new_metrics = list(zip(*metrics))
+
+    # Doordat alle waarden voor tp, fp, fn, tn van een item nu in een tuple zitten
+    # kunnen we de sum gaan toepassen op de elementen in deze tuples om zo het totaal te berekenen
+    tp = sum(new_metrics[1])
+    fp = sum(new_metrics[2])
+    fn = sum(new_metrics[3])
+    tn = sum(new_metrics[4])
 
     # BEREKEN HIERONDER DE JUISTE METRIEKEN EN RETOURNEER DIE 
     # ALS EEN DICTIONARY
 
-    rv = {'tpr':0, 'ppv':0, 'tnr':0, 'fpr':0 }
+    # Berkeningen van de metrieken
+    tpr = tp / (tp + fn)
+    ppv = tp / (tp + fp)
+    tnr = tn / (tn + fp)
+    fpr = fp / (fp + tn)
+    # Resultaten opslaan in een dictionary
+    rv = {'tpr': tpr, 'ppv': ppv, 'tnr': tnr, 'fpr': fpr}
+
     return rv
