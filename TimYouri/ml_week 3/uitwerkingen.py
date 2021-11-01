@@ -105,13 +105,22 @@ def conf_data(metrics):
 
     # VERVANG ONDERSTAANDE REGELS MET JE EIGEN CODE
 
-    tp = 1
-    fp = 1
-    fn = 1
-    tn = 1
+    tp = 0
+    fp = 0
+    fn = 0
+    tn = 0
 
-    # BEREKEN HIERONDER DE JUISTE METRIEKEN EN RETOURNEER DIE 
+    for index, label in enumerate(metrics):
+        tp += label[1]
+        fp += label[2]
+        fn += label[3]
+        tn += label[4]
+
+
+
+    # BEREKEN HIERONDER DE JUISTE METRIEKEN EN RETOURNEER DIE
     # ALS EEN DICTIONARY
 
-    rv = {'tpr': 0, 'ppv': 0, 'tnr': 0, 'fpr': 0}
+    rv = {'tpr': tp/(tp+fn), 'ppv': tp/(tp+fp), 'tnr': tn/(tn+fp), 'fpr': fp/(fp+tn)}
+
     return rv
