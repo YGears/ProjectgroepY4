@@ -1,43 +1,48 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/rendering.dart';
+
 import 'second.dart';
 import 'secondScreen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-Future<Album> fetchAlbum(title) async {
+Future<Album> fetchAlbum(title, context) async {
   final response = await http
       .post(Uri.parse('https://iabamun.nl/game/lab-andre/api/index.php/login'),
       body: jsonEncode(<String, String>{
-        "name":"Lelouch557",
-        "password": "KoekjesZijnGemaaktVanDeeg"
+        "name": title.toString(),
+        "password": "KoekjesZijnGemaaktVanDeeg",
       }),
     );
+  var data = jsonDecode(response.body);
 
-  print(response.statusCode.toString());
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    return Album.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load album');
+  if(data['response'] != null){
+    if(data['response'] == "Logged in"){
+      Navigator.push(context, 
+      MaterialPageRoute(builder: (context) => const MyHomePage(title: 'wat')));
+    }
   }
+
+  return Album.fromJson(jsonDecode(response.body));
 }
 
 class Album {
-  final String title;
+  final String response;
 
   Album({
-    required this.title,
+    required this.response,
   });
+
+  getResponse(){
+    return response;
+  }
 
   factory Album.fromJson(Map<String, dynamic> json) {
     return Album(
-      title: json['response'],
+      response: json['response'],
     );
   }
 }
@@ -52,7 +57,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var futureAlbum;
+  late Future<Album> futureAlbum;
+  String error = "";
 
   // @override
   // void initState() {
@@ -63,14 +69,15 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Fetch Data Example',
+      title: 'Hanze Verpleeg App',
       theme: ThemeData(
+        scaffoldBackgroundColor: const Color(0xFFe3e6e8),
         primarySwatch: Colors.blue,
       ),
       home: Builder(
         builder: (context) =>Scaffold(
           appBar: AppBar(
-            title: const Text('Fetch Data Example'),
+            title: const Text('Nurse - IT'),
           ),
           body: 
           Center(
@@ -80,18 +87,44 @@ class _MyAppState extends State<MyApp> {
       )
     );
   }
-  Column buildColumn(BuildContext context){
-    return Column(
-      children:<Widget>[
-        TextButton(
-          onPressed: (){
-            setState(() {
-              futureAlbum = fetchAlbum("");
-            });
-            login(context);
-          },
-          style: TextButton.styleFrom(padding:EdgeInsets.all(5), backgroundColor: Colors.blue),
-          child: Text("Login"),
+  Table buildColumn(BuildContext context){
+    final myController = TextEditingController();
+
+    @override
+    void dispose() {
+      // Clean up the controller when the widget is disposed.
+      myController.dispose();
+      super.dispose();
+    }
+    return Table(
+      columnWidths:{ 
+        0: FlexColumnWidth(8),
+        1: FlexColumnWidth(6)
+      },
+      children: [
+        TableRow(children: [ Text(error, style:TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),Text("")]
+        ),
+        TableRow(
+         children:[TextField(
+            decoration: InputDecoration( fillColor: Colors.white, filled: true),
+            controller: myController,
+          ),
+          Container(
+          
+            child: 
+            TextButton(
+              
+              onPressed: (){
+                futureAlbum = fetchAlbum(myController.text, context);
+                setState(() {
+                  error = "Failed to login";
+                });
+              },
+              style: TextButton.styleFrom(padding:EdgeInsets.all(25), backgroundColor: Colors.blue),
+              child: const Text("Login", style: TextStyle(color: Colors.black),),
+            )
+          ),
+        ]
         )
       ]
     );
